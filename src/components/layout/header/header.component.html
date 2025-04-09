@@ -1,0 +1,49 @@
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="assets/images/logo-1.png" alt="pitchkeeper manager" />
+        </div>
+        <div class="header-nav">
+            <nav class="header-dropdown" *ngIf="isLoggedIn">
+                <a class="header-nav_menu menu_trigger" (click)="isOpen = !isOpen" >Menu
+                  <!-- <i [ngClass]="isOpen ? 'gg-chevron-up' : 'gg-chevron-down'" ></i> -->
+                </a>
+                <ul
+                    class="menu"
+                    role="menu"
+                    *ngIf="isOpen" [@dropDownMenu]
+                >
+                    <li class="menu_item" role="menuitem"><a routerLink="/dashboard" (click)="isOpen = !isOpen">Dashboard</a></li>
+                    <li class="menu_item" role="menuitem"><a routerLink="/teams" (click)="isOpen = !isOpen">Teams</a></li>
+                    <li class="menu_item" role="menuitem"><a routerLink="/games" (click)="isOpen = !isOpen">Games</a></li>
+                    <li class="menu_item" role="menuitem"><a routerLink="/players" (click)="isOpen = !isOpen">Players</a></li>
+                    <li class="menu_item" role="menuitem">Users</li>
+                    <li class="menu_item" role="menuitem">Seasons</li>
+                    <li class="menu_item" role="menuitem">Message Center</li>
+                    <li class="menu_item" role="menuitem"><a routerLink="/profile" (click)="isOpen = !isOpen"><span>{{currentUser.username}}</span></a></li>
+                </ul>
+            </nav>
+            <nav class="header-links header-links_loggedIn" *ngIf="isLoggedIn">
+              <ul>
+                <li class="header-link header-link_orange">
+                  <a href="/home" class="nav-link"
+                    routerLink="home">
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <nav  class="header-links header-links_loggedIOut" *ngIf="!isLoggedIn">
+              <ul>
+                <li class="header-link header-link_green">
+                  <a href="/register" routerLink="register">Sign Up</a>
+                </li>
+                <li class="header-link header-link_orange">
+                  <a href="/login" routerLink="login">Login</a>
+                </li>
+              </ul>
+            </nav>
+        </div>
+    </div>
+  </header>
+  

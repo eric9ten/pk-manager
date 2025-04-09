@@ -1,0 +1,27 @@
+<div class="newsletter">    
+    <div class="newsletter_titleWrapper">
+        <p class="newsletter_title">Join the community &amp; stay informed!</p>
+      </div>
+      <div class="newsletter_formWrapper">
+        <form class="newsletter_newsletterForm">
+          <fieldset>
+            <div class="newsletter_fields">
+              <div class="newsletter_input">
+                <pkm-input-standard
+                  type="email"
+                  placeholder="youremail@domain.com"
+                  [isDisabled]="false"
+                >
+                </pkm-input-standard>
+              </div>
+              <div class="newsletter_button">
+                <pkm-button-standard label="join" type="submit" color="green" [isDisabled]="true"></pkm-button-standard>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+        <p class="success">
+          You have been subscribed to our email list.
+        </p>
+      </div>
+</div>

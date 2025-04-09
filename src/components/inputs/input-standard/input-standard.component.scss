@@ -1,0 +1,13 @@
+.standard-input {
+    width: 100%;
+    padding-left: 1rem;
+    font-size: .875rem;
+    line-height: 2.5;
+    border: none;
+    caret-color: var(--c-orange);
+
+    &::placeholder {
+        font-family: var(--font2);
+        color: var(--c-grey-d1);
+    }
+}

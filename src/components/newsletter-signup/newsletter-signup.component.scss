@@ -1,0 +1,65 @@
+.newsletter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    font-size: 1.25rem;
+    text-align: center;
+  
+    .success {
+      font-size: .75rem;
+      margin-top: 1.56rem;
+      opacity: 0;
+      transition: opacity 1s;
+  
+      &.active {
+        opacity: 1;
+      }
+    }
+    
+    &_titleWrapper {
+      margin-bottom: 1rem;
+  
+    }
+  
+    &_title {
+      margin-bottom: 0.4rem;
+      font-family: var(--font1);
+      font-size: 1.25rem;
+      font-weight: 400;
+      line-height: 1.25;
+      text-transform: none;
+    }
+  
+    &_formWrapper {
+        width: 100%;
+    }
+  
+    &_newsletterForm {
+      width: 100%;
+  
+      fieldset {
+        border: none;
+      }
+    }
+    
+    &_fields {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: .15rem .5rem;
+    }
+  
+  &_input {
+    width: 100%;
+  }
+
+  &_button {
+    position: absolute;
+    right: 0;
+  }
+
+} 
