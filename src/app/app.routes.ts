@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TeamsViewComponent } from '../pages/teams-view/teams-view.component';
 
 export const routes: Routes = [
     {
@@ -15,5 +16,6 @@ export const routes: Routes = [
                 (c) => c.TeamsViewComponent
             ),
     },
+    // { path: 'teams', component: TeamsViewComponent },
     {  path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
