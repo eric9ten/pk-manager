@@ -1,3 +1,8 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+
 :root {
 	//** Colors ** //
 	//primary - named colors, font colors, etc.
@@ -11,7 +16,6 @@
 
 	// named colors
 	// solid
-	--c-orange: #ffa500;
 	--c-green: #7fc356;
 	--c-green-l4: #D8EDCB;
 	--c-green-l2: #A6D588;
@@ -54,8 +58,20 @@
 	--c-n3: #4d4d4d;
 	--c-n4: #222222;
 	
+	--c-grey: #9f9f9f;
+	--c-grey-l5: #fafafa;
+	--c-grey-l4: #f5f5f5;
+	--c-grey-l3: #efefef;
+	--c-grey-l2: #b3b3b3;
 	--c-grey-d1: #767676;
-	--c-grey-d4: #424242;
+	--c-grey-d2: #626262;
+	--c-grey-d3: #434343;
+	--c-grey-d4: #222222;
+
+	--c-orange: #ffa500;
+	--c-orange-l5: #fff3e0;
+	--c-orange-l4: #ffe0b3;
+	--c-orange-l3: #ffcc80;
 
 	//State cs//
 	--c-link: var(--c-primary);
@@ -79,9 +95,150 @@
 	--w-max: 1400px;
 
 	// Global 
+html {
+	// @include mat.theme((
+	// 	color: (
+	// 	theme-type: light,
+	// 	primary: mat.$azure-palette,
+	// 	te
+	// 	rtiary: mat.$blue-palette,
+	// 	),
+	// 	typography: Roboto,
+	// 	density: 0,
+	// ));
+	}
+
+	h1 {
+		color: var(--c-orange);
+		font-family: var(--font1);
+		font-size: 3.125rem;
+		line-height: 1;
+		font-weight: 700;
+		letter-spacing: -0.2px;
+	}
+	
+	h2 {
+		color: var(--c-grey-d4);
+		font-family: var(--font1);
+		font-size: 2rem;
+		line-height: 1;
+		font-weight: 500;
+		letter-spacing: -0.2px;
+	}
 
 	a {
 		text-decoration: none;
 		cursor: pointer;
 	}
+
+	.manager-page {
+		width: 100%;
+		max-width: 1400px;
+		min-height: calc(100vh - 100px);
+		margin: 0 auto;
+		border-left: 1px solid var(--c-grey-l2);
+		border-right: 1px solid var(--c-grey-l2);
+		font-family: var(--font3);
+
+		&_title {
+			padding: .83rem .56rem .875rem;
+			border-bottom: 1px solid var(--c-grey-l2);
+			text-align: left;
+
+			h1 {
+				margin: 0;
+			}
+		}
+
+		&_content-container {
+			padding: 1.25rem 4rem 1rem;
+			border-bottom: 1px solid var(--c-grey-l2);
+
+			&:last-of-type {
+				border-bottom: none;
+			}
+		}
+		
+		&_section-title {
+			padding-bottom: 1rem;
+			border-bottom: 1px solid var(--c-grey-l2);
+
+			h2 {
+				margin: 0;
+				text-align: left;
+				text-transform: none;
+			}
+
+		}
+
+		&_no-content {
+			padding: 0.5rem 0 0.5rem 1.25rem;
+		}
+
+
+	}
+	  
+.pkm-table {
+	width: 100%;
+    font-family: var(--font2);
+	border-top: 1px solid var(--c-grey-l2);
+	border-spacing: 0;
+
+	th {
+        border: 1px solid var(--c-grey-l2);
+        font-size: .875rem;
+        text-align: center;
+
+    }
+
+	tr {
+        border-top-width: 1px;
+		border-top-style: solid;
+        border-top-color: var(--c-grey-l2);
+        border-bottom-width: 1px;
+		border-bottom-style: solid;
+        border-bottom-color: var(--c-grey-l2);
+
+		&:first-child {
+			border-top-color: transparent;
+		}
+
+		&:last-child {
+			border-bottom-color: transparent;
+		}
+
+		&:nth-child(odd) {
+			background-color: var(--c-orange-l5);
+		}
+		
+		&:hover {
+            border-top-color: var(--c-orange-l5);
+            border-bottom-color: var(--c-orange-l5);
+            background-color: var(--c-orange-l4);
+            cursor: pointer;
+            
+        }
+		&:focus {
+            border-top-color: var(--c-orange-l4);
+            border-bottom-color: var(--c-orange-l4);
+            background-color: var(--c-orange-l3);
+            cursor: pointer;
+			font-weight: 700;
+		}
+	}
+	
+	td {
+        padding: .5rem 0 .5rem 1.25rem;
+        font-size: 1rem;
+		line-height: 1.5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+	}
+
 }
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,1 +1,150 @@
-<p>teams-view works!</p>
+<div class="manager-page teams-page">
+    <div class="manager-page_title">
+        <h1>{{title}}</h1>
+    </div>
+    <div class="manager-page_content teamsPage_content">
+        <div class="manager-page_content-wrapper teams-page_content-wrapper">
+            <div class="manager-page_content-container owned-teams">
+                <div class="manager-page_section-title owned-teams_section-title">
+                    <h2>Owned</h2>
+                </div>  
+                <div *ngIf="loading">
+                    Loading...
+                </div>
+                <div *ngIf="error">
+                    Error :(
+                </div>
+                <div class="manager-page_content_no-content" *ngIf="!ownedDataSource.data.length">
+                    <h4>You are not the owner of any teams.</h4>
+                </div>
+                <div class="teams-table_container">
+                    <table mat-table [dataSource]="ownedDataSource" class="pkm-table manager-page_table teams-table" 
+                        *ngIf="ownedDataSource.data.length">
+                        <ng-container matColumnDef="name">
+                            <td mat-cell *matCellDef="let team" class="pageTable_data teamsTable_name">
+                            {{team .name}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="ageGroup">
+                            <td mat-cell *matCellDef="let team " class="pageTable_data teamsTable_divAge">{{team .ageGroup | uppercase }}</td>
+                        </ng-container> 
+                        <ng-container matColumnDef="genGroup">
+                            <td mat-cell *matCellDef="let team "  class="pageTable_data teamsTable_divGen">{{team .genGroup | uppercase }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="playerCount">
+                            <td mat-cell *matCellDef="let team "  class="pageTable_data teamsTable_playerCount">{{team .player_count}} players</td>
+                        </ng-container>
+                        <ng-container matColumnDef="coaches">
+                            <td mat-cell *matCellDef="let team "  class="pageTable_data teamsTable_staff">
+                                <span *ngIf="!team.managersInfo">
+                                    no coaches
+                                </span>
+                                <span *ngFor="let manager of team .managersInfo">{{ manager.first }} {{ manager.last }}, </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="arrow">
+                            <td mat-cell *matCellDef="let element" class="pageTable_data teamsTable_nav"><span class="triangle triangle_right triangle_grey"></span></td>
+                        </ng-container>
+                            <tr mat-row *matRowDef="let row; columns: ownedDisplayColumns;" class="pageTable_row teamsRow" (click)="clickTeam(row)"></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="manager-page_content-container coachedTeams">
+                <div class="manager-page_section-title coachedTeams_sectionTitle">
+                    <h2>Coached</h2>
+                </div>    
+                <div *ngIf="loadingCoached">
+                    Loading...
+                </div>
+                <div *ngIf="errorCoached">
+                    Error :(
+                </div><div class="manager-page_content_noContent" *ngIf="!coachedDataSource.data.length">
+                    <h4>You are not the owner of any teams.</h4>
+                </div>
+                <div class="teams-table_container">
+                    <table mat-table [dataSource]="coachedDataSource" class="pkm-table manager-page_table teams-table" *ngIf="coachedDataSource.data.length">
+                        <ng-container matColumnDef="name">
+                            <td mat-cell *matCellDef="let team" class="pageTable_data teamsTable_name">{{team.name}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="ageGroup">
+                            <td mat-cell *matCellDef="let team" class="pageTable_data teamsTable_divAge">{{team.ageGroup | uppercase }}</td>
+                        </ng-container> 
+                        <ng-container matColumnDef="genGroup">
+                            <td mat-cell *matCellDef="let team"  class="pageTable_data teamsTable_divGen">{{team.genGroup | uppercase }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="playerCount">
+                            <td mat-cell *matCellDef="let team"  class="pageTable_data teamsTable_playerCount">{{team.player_count}} players</td>
+                        </ng-container>
+                        <ng-container matColumnDef="arrow">
+                            <td mat-cell *matCellDef="let team" class="pageTable_data teamsTable_nav"><span class="triangle triangle_right triangle_grey"></span></td>
+                        </ng-container>
+                        <tr mat-row *matRowDef="let row; columns: coachedDisplayColumns;" class="pageTable_row teamsRow" (click)="clickTeam(row)"></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="managerAddSection">
+        <form class="managerAddSection_wrapper" [formGroup]="addTeamForm" (ngSubmit)="onSubmit()">
+            <div class="managerAddSection_title">
+                <div class="titleWrapper_titleWrapper"><h3>Add Teams</h3></div>
+                <div class="titleWrapper_buttonWrapper"><button type="submit" [disabled]="!addTeamForm.valid" class="buttonMed buttonGreen">Add Team</button></div>
+            </div>
+            <div class="managerAddSection_content">
+                <div class="content_wrapper">
+                    <input id="teamName" name="name" class="content_input" type="text" placeholder="team name" formControlName="name" required />
+                </div>
+                <div class="content_wrapper">
+                    <input class="content_input input_abbrev" type="text" placeholder="team abbreviation" formControlName="abbrev" required/>
+                </div>
+                <div class="content_wrapper">
+                    <input class="content_input input_age" type="text" placeholder="U16, JV, etc" formControlName="ageGroup" />
+                </div>
+                <div class="content_wrapper_alert">
+                    <div *ngIf="f['name'].invalid && (f['name'].dirty || f['name'].touched)" class="alert alert-danger">
+                        <div *ngIf="f['name'].errors?.['required']">
+                            Team Name is required.
+                        </div>
+                        <div *ngIf="f['name'].errors?.['minlength']">
+                            Team Name must be at least 4 characters long.
+                        </div>
+                    </div>
+                </div>
+                <div class="content_wrapper_alert">
+                    <div *ngIf="f['abbrev'].invalid && (f['abbrev'].dirty || f['abbrev'].touched)" class="alert alert-danger">
+                        <div *ngIf="f['abbrev'].errors?.['required']">
+                            Abbreviation is required.
+                        </div>
+                        <div *ngIf="f['abbrev'].errors?.['maxlength']">
+                            Abbreviation must be 4 characters or less.
+                        </div>
+                    </div>
+                </div>
+                <div class="content_wrapper_alert">
+                    <div *ngIf="f['ageGroup'].invalid && (f['ageGroup'].dirty || f['ageGroup'].touched)" class="alert alert-danger">
+                        <div *ngIf="f['ageGroup'].errors?.['required']">
+                            Age Group is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="content_wrapper">
+                    <div class="content_input checkboxToggle">
+                        <mat-label for="genderToggle" class="toggleLabel toggleLabel_left"><p>boys</p></mat-label>
+                        <mat-slide-toggle formControlName="genGroup" id="genderToggle" name="gender" [checked]="checked" 
+                            (change)="onGenderCheck($event)" defaultColor="#ffa500 0"></mat-slide-toggle>
+                        <mat-label for="genderToggle" class="toggleLabel toggleLabel_right"><p>girls</p></mat-label>
+                    </div>
+                </div>
+                <div class="content_wrapper">
+                    <div class="content_input input_colors" formGroupName="colors">
+                        <p class="colors_title">colors:</p>
+                        <mat-label class="colors_label" for="homeColor">home</mat-label>
+                        <input type="color" class="colors_picker" id="homeColor" name="homeColor" formControlName="home" />
+                        <mat-label class="colors_label" for="awayColor">away</mat-label>
+                        <input type="color" class="colors_picker" id="awayColor" name="awayColor" formControlName="away" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div> -->
+</div>
