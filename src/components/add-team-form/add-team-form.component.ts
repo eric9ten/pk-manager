@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 import { ButtonStandardComponent } from "../buttons/button-standard/button-standard.component";
 
 @Component({
   selector: 'pkm-add-team-form',
-  imports: [CommonModule, ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, ButtonStandardComponent],
+  imports: [CommonModule, ReactiveFormsModule, MatRadioModule, MatFormFieldModule, ButtonStandardComponent],
   templateUrl: './add-team-form.component.html',
   styleUrl: './add-team-form.component.scss'
 })
@@ -24,7 +24,7 @@ export class AddTeamFormComponent {
         home: ['#000000'],
         away: ['#ffffff']
       }),
-      genGroup: [''],
+      genGroup: ['girls'],
       owner: ['']
   
     })
@@ -43,6 +43,7 @@ export class AddTeamFormComponent {
   }
 
   onSubmitClick(): void {
+    console.log('FORM VALUES: ', this.addTeamForm)
     console.log('Submitting form...')
   }
 

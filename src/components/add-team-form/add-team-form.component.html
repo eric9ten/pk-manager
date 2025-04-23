@@ -7,47 +7,68 @@
         </div>
         <div class="add-team_content">
             <div class="add-team_input-wrapper">
-                <input id="teamName" name="name" class="add-team_input" type="text" placeholder="team name" formControlName="name" required />
+                <input id="teamName" name="name" class="add-team_input" type="text" placeholder="team name" 
+                    formControlName="name"
+                    required
+                >
+                <div class="add-team_alert-wrapper">
+                    @if (f['name'].invalid && (f['name'].dirty || f['name'].touched)) {
+                        @if (f['name'].hasError('required')) {
+                            <div>
+                                Team Name is required.
+                            </div>
+                        }
+    
+                        @if (f['name'].hasError('minlength')) {
+                            <div>
+                                Team Name must be at least 4 characters long.
+                            </div>
+                        }
+                    }
+                </div>
             </div>
             <div class="add-team_input-wrapper">
-                <input class="add-team_input input_abbrev" type="text" placeholder="team abbreviation" formControlName="abbrev" required/>
-                <input class="add-team_input input_age" type="text" placeholder="U16, JV, etc" formControlName="ageGroup" />
-            </div>
-            <!-- <div class="add-team_input-wrapper">
-                <input class="add-team_input input_age" type="text" placeholder="U16, JV, etc" formControlName="ageGroup" />
-            </div> -->
-            <div class="add-team_alert-wrapper">
-                <div *ngIf="f['name'].invalid && (f['name'].dirty || f['name'].touched)" class="alert alert-danger">
-                    <div *ngIf="f['name'].errors?.['required']">
-                        Team Name is required.
-                    </div>
-                    <div *ngIf="f['name'].errors?.['minlength']">
-                        Team Name must be at least 4 characters long.
-                    </div>
+                <div class="add-team_input-row-wrapper">
+                    <input class="add-team_input input_abbrev" type="text" placeholder="team abbreviation" formControlName="abbrev" required/>
+                    <input class="add-team_input input_age" type="text" placeholder="U16, JV, etc" formControlName="ageGroup" />
                 </div>
-            </div>
-            <div class="add-team_alert-wrapper">
-                <div *ngIf="f['abbrev'].invalid && (f['abbrev'].dirty || f['abbrev'].touched)" class="alert alert-danger">
-                    <div *ngIf="f['abbrev'].errors?.['required']">
-                        Abbreviation is required.
-                    </div>
-                    <div *ngIf="f['abbrev'].errors?.['maxlength']">
-                        Abbreviation must be 4 characters or less.
-                    </div>
-                </div>
-            </div>
-            <div class="add-team_alert-wrapper">
-                <div *ngIf="f['ageGroup'].invalid && (f['ageGroup'].dirty || f['ageGroup'].touched)" class="alert alert-danger">
-                    <div *ngIf="f['ageGroup'].errors?.['required']">
-                        Age Group is required.
-                    </div>
+                <div class="add-team_alert-wrapper">
+                    @if ( (f['abbrev'].invalid && (f['abbrev'].dirty || f['abbrev'].touched)) || 
+                        (f['ageGroup'].invalid && (f['ageGroup'].dirty || f['ageGroup'].touched)) ) {
+                        @if (f['abbrev'].hasError('required')) {
+                            <div *ngIf="f['abbrev'].errors?.['required']">
+                                Abbreviation is required.
+                            </div>
+                        }
+                        @if (f['abbrev'].hasError('minlength')) {
+                            <div *ngIf="f['abbrev'].errors?.['maxlength']">
+                                Abbreviation must be 4 characters or less.
+                            </div>
+                        }
+                        @if ( f['ageGroup'].invalid && (f['ageGroup'].dirty || f['ageGroup'].touched)) {
+                            @if (f['name'].hasError('required')) {
+                                <div *ngIf="f['ageGroup'].errors?.['required']">
+                                    Age Group is required.
+                                </div>
+                            }
+                        }
+                    }
                 </div>
             </div>
             <div class="content_wrapper">
-                <div class="content_input input-toggle">
-                    <p class="add-team_toggle-label toggle-label_left">boys</p>
-                    <mat-slide-toggle formControlName="genGroup" id="genderToggle" name="gender" [checked]="isChecked" 
-                        (change)="onGenderCheck($event)" defaultColor="#ffa500 0" labelPosition="after">girls</mat-slide-toggle>
+                <div class="add-team_input-radio-container">
+                    <div class="add-team_radio-wrapper">
+                        <label for="girls">Girls</label>
+                        <input type="radio" id="girls" name="genGroup" value="girls" formControlName="genGroup" checked>
+                    </div>
+                    <div class="add-team_radio-wrapper">
+                        <label for="boys">Boys</label>
+                        <input type="radio" id="boys" name="genGroup" value="boys" formControlName="genGroup">
+                    </div>
+                    <div class="add-team_radio-wrapper">
+                        <label for="coed">Co-Ed</label>
+                        <input type="radio" id="coed" name="genGroup" value="coed" formControlName="genGroup">
+                    </div>
                 </div>
             </div>
             <div class="content_wrapper">

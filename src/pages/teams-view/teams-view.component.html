@@ -3,8 +3,8 @@
         <h1>{{title}}</h1>
     </div>
     <div class="manager-page_content teamsPage_content">
-        <mat-drawer-container [hasBackdrop]="true">
-        <mat-drawer-content>
+        <mat-sidenav-container [hasBackdrop]="true">
+        <mat-sidenav-content>
             <div class="manager-page_content-wrapper teams-page_content-wrapper">
                 <div class="manager-page_content-container owned-teams">
                     <div class="manager-page_section-title owned-teams_section-title">
@@ -89,9 +89,9 @@
                     </div>
                 </div>
             </div>
-        </mat-drawer-content>
-        <mat-drawer #snav position="end" mode="over" >
+        </mat-sidenav-content>
+        <mat-sidenav #snav position="end" mode="over">
             <pkm-add-team-form />
-        </mat-drawer>
-    </mat-drawer-container>
+        </mat-sidenav>
+    </mat-sidenav-container>
 </div>
