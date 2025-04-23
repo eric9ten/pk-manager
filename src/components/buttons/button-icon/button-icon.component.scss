@@ -1,0 +1,25 @@
+.icon-button {
+    border: none;
+    background-color: transparent;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    
+    &.grey {
+        fill: var(--c-grey-d1);
+
+        &:hover {
+            fill: var(--c-orange);
+        }
+
+        &:active {
+            fill: var(--c-orange-d1);
+        }
+
+        &:disabled {
+            fill: var(--c-grey-l2);
+        }
+    }
+}

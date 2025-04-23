@@ -72,6 +72,7 @@
 	--c-orange-l5: #fff3e0;
 	--c-orange-l4: #ffe0b3;
 	--c-orange-l3: #ffcc80;
+	--c-orange-d1: #ff9000;
 
 	//State cs//
 	--c-link: var(--c-primary);
@@ -160,6 +161,8 @@ html {
 		}
 		
 		&_section-title {
+			display: flex;
+			column-gap: .5rem;
 			padding-bottom: 1rem;
 			border-bottom: 1px solid var(--c-grey-l2);
 
