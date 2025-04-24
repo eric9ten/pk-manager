@@ -96,6 +96,7 @@
 	--w-max: 1400px;
 
 	--mat-sidenav-scrim-color: var(--c-orange10);
+	
 	// Global 
 html {
 	// @include mat.theme((
@@ -109,6 +110,14 @@ html {
 	// 	density: 0,
 	// ));
 	}
+html, body { 
+	height: 100%; 
+}
+
+body { 
+	margin: 0; 
+	font-family: var(--font3), "Helvetica Neue", sans-serif; 
+}
 
 	h1 {
 		color: var(--c-orange);
@@ -132,6 +141,55 @@ html {
 		text-decoration: none;
 		cursor: pointer;
 	}
+
+	
+	.label-radio {
+		font-size: 1rem;
+		line-height: 1.1;
+		display: grid;
+		grid-template-columns: auto 1em;
+		gap: 0.5em;
+	}
+	
+	.label-radio:focus-within {
+		color: ar(--c-orange);
+	}
+
+	input[type="radio"] {
+		-webkit-appearance: none;
+		appearance: none;
+		background-color: transparent;
+		margin: 0;
+		font: inherit;
+		color: var(--c-orange);
+		width: 1.15em;
+		height: 1.15em;
+		border: 0.15em solid var(--c-orange);
+		border-radius: 50%;
+		transform: translateY(-0.075em);
+		display: grid;
+		place-content: center;
+	  }
+	  
+	  input[type="radio"]::before {
+		content: "";
+		width: 0.65em;
+		height: 0.65em;
+		border-radius: 50%;
+		transform: scale(0);
+		transition: 120ms transform ease-in-out;
+		box-shadow: inset 1em 1em var(--c-orange);
+		background-color: var(--c-orange);
+	  }
+	  
+	  input[type="radio"]:checked::before {
+		transform: scale(1);
+	  }
+	  
+	  input[type="radio"]:focus {
+		outline: max(2px, 0.15em) solid var(--c-orange);
+		outline-offset: max(2px, 0.15em);
+	  }
 
 	.manager-page {
 		width: 100%;
@@ -182,67 +240,66 @@ html {
 
 	}
 	  
-.pkm-table {
-	width: 100%;
-    font-family: var(--font2);
-	border-top: 1px solid var(--c-grey-l2);
-	border-spacing: 0;
+	.pkm-table {
+		width: 100%;
+		font-family: var(--font2);
+		border-top: 1px solid var(--c-grey-l2);
+		border-spacing: 0;
 
-	th {
-        border: 1px solid var(--c-grey-l2);
-        font-size: .875rem;
-        text-align: center;
+		th {
+			border: 1px solid var(--c-grey-l2);
+			font-size: .875rem;
+			text-align: center;
 
-    }
-
-	tr {
-        border-top-width: 1px;
-		border-top-style: solid;
-        border-top-color: var(--c-grey-l2);
-        border-bottom-width: 1px;
-		border-bottom-style: solid;
-        border-bottom-color: var(--c-grey-l2);
-
-		&:first-child {
-			border-top-color: transparent;
 		}
 
-		&:last-child {
-			border-bottom-color: transparent;
-		}
+		tr {
+			border-top-width: 1px;
+			border-top-style: solid;
+			border-top-color: var(--c-grey-l2);
+			border-bottom-width: 1px;
+			border-bottom-style: solid;
+			border-bottom-color: var(--c-grey-l2);
 
-		&:nth-child(odd) {
-			background-color: var(--c-orange-l5);
+			&:first-child {
+				border-top-color: transparent;
+			}
+
+			&:last-child {
+				border-bottom-color: transparent;
+			}
+
+			&:nth-child(odd) {
+				background-color: var(--c-orange-l5);
+			}
+			
+			&:hover {
+				border-top-color: var(--c-orange-l5);
+				border-bottom-color: var(--c-orange-l5);
+				background-color: var(--c-orange-l4);
+				cursor: pointer;
+				
+			}
+			&:focus {
+				border-top-color: var(--c-orange-l4);
+				border-bottom-color: var(--c-orange-l4);
+				background-color: var(--c-orange-l3);
+				cursor: pointer;
+				font-weight: 700;
+			}
 		}
 		
-		&:hover {
-            border-top-color: var(--c-orange-l5);
-            border-bottom-color: var(--c-orange-l5);
-            background-color: var(--c-orange-l4);
-            cursor: pointer;
-            
-        }
-		&:focus {
-            border-top-color: var(--c-orange-l4);
-            border-bottom-color: var(--c-orange-l4);
-            background-color: var(--c-orange-l3);
-            cursor: pointer;
-			font-weight: 700;
+		td {
+			padding: .5rem 0 .5rem 1.25rem;
+			font-size: 1rem;
+			line-height: 1.5;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
 		}
-	}
-	
-	td {
-        padding: .5rem 0 .5rem 1.25rem;
-        font-size: 1rem;
-		line-height: 1.5;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
 
 	}
-
-}
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
