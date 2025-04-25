@@ -1,21 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TTeamColor } from '../../types/team.type';
 
 @Component({
   selector: 'pkm-color-picker',
-  imports: [],
+  imports: [ CommonModule],
   templateUrl: './color-picker.component.html',
   styleUrl: './color-picker.component.scss'
 })
 
-type TeamColor = {
-  name: string;
-  value: string;
-}
-
 export class ColorPickerComponent {
 
-  colors: TeamColor[] = [
+  colors: TTeamColor[] = [
     { name: 'black', value: '#000000' },
     { name: 'white', value: '#ffffff' },
   ]
+
+  onSwatchClick(): void {
+    console.log('Swatch clicked!')
+  }
 }

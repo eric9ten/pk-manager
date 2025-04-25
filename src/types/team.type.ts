@@ -17,3 +17,8 @@ export type TTeam = {
         away: string;
     }
 }
+
+export type TTeamColor = {
+    name: string;
+    value: string;
+  }

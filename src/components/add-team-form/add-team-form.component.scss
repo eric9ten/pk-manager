@@ -79,12 +79,6 @@
             .colors {
                 &_title {
                     margin-right: 2.75rem;
-
-                }
-
-                &_label {
-                    margin-right: 1rem;
-
                 }
 
                 &_picker {
@@ -100,6 +94,16 @@
                 }
             }
         }
+    }
+
+    &_input-swatch {
+        width: 50px;
+        height: 50px;
+        border: 1px solid var(--c-orange-l3);
+    }
+
+    .swatch-background{
+        background-color: #cccccc;
     }
 
     &_alert-wrapper {
