@@ -152,7 +152,7 @@ body {
 	}
 	
 	.label-radio:focus-within {
-		color: ar(--c-orange);
+		color: var(--c-orange);
 	}
 
 	input[type="radio"] {
@@ -186,10 +186,10 @@ body {
 		transform: scale(1);
 	  }
 	  
-	  input[type="radio"]:focus {
-		outline: max(2px, 0.15em) solid var(--c-orange);
-		outline-offset: max(2px, 0.15em);
-	  }
+	//   input[type="radio"]:focus {
+	// 	outline: max(2px, 0.15em) solid var(--c-orange);
+	// 	outline-offset: max(2px, 0.15em);
+	//   }
 
 	.manager-page {
 		width: 100%;
