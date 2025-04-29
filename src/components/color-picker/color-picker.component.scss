@@ -1,8 +1,65 @@
 .color-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 1.5rem 1rem;
+
+    &_title {
+        width: 100%;
+        margin-bottom: 1.25em;
+        color: var(--c-text);
+        font-size: 1.25rem;
+        text-align: center;
+
+        h3 {
+            margin: 0;
+            font-weight: 500;
+        }
+    }
+
+    &_swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem .5rem;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
 
     &_swatch {
         width: 50px;
         height: 50px;
-        border: 1px solid var(--c-orange-l3);
+        border: 1px solid var(--c-grey-l3);
+        border-radius: 3px;
+
+        &:hover {
+            cursor: pointer;
+            -webkit-animation: grow 0.25s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: grow 0.25s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+        }
     }
 }
+
+ @-webkit-keyframes grow {
+    0% {
+      -webkit-transform: scale(1);
+              transform: scale(1);
+    }
+    100% {
+      -webkit-transform: scale(1.25);
+              transform: scale(1.25);
+    }
+  }
+  @keyframes grow {
+    0% {
+      -webkit-transform: scale(1);
+              transform: scale(1);
+    }
+    100% {
+      -webkit-transform: scale(1.25);
+              transform: scale(1.25);
+    }
+  }
+  

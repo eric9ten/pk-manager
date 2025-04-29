@@ -1,5 +1,10 @@
 .teams-page {
-    padding-bottom: 2.5rem
+    padding-bottom: 2.5rem;
+
+    &_sidenav {
+        box-shadow: -10px 0px 13px rgba(138, 138, 138, 0.5);
+        // filter: drop-shadow(-100px 0px 13px #8a8a8a);
+    }
 }
 
 .teams-table {
@@ -48,6 +53,7 @@
         text-align: right;
         vertical-align: middle;
     }
+
 }
 
 .coached-teams_teams-table .teams-table {

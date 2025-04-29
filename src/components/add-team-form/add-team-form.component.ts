@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDialog } from '@angular/material/dialog';
 import { ButtonStandardComponent } from "../buttons/button-standard/button-standard.component";
 import { ColorPickerComponent } from '../color-picker/color-picker.component';
+import { TTeamColor } from '../../types/team.type';
 
 @Component({
   selector: 'pkm-add-team-form',
@@ -14,6 +15,8 @@ import { ColorPickerComponent } from '../color-picker/color-picker.component';
   styleUrl: './add-team-form.component.scss'
 })
 export class AddTeamFormComponent {
+    teamColor = signal<TTeamColor>({name: 'black', value: '#000000'});
+    // teamAwayColor = signal<TTeamColor>({name: 'white', value: '#ffffff'});
     private fb = inject(FormBuilder);
 
     readonly dialog = inject(MatDialog);
@@ -62,11 +65,13 @@ export class AddTeamFormComponent {
 
   onSwatchClick(): void {
     console.log('Swatch clicked!')
-    const dialogRef = this.dialog.open(ColorPickerComponent);
+    const dialogRef = this.dialog.open(ColorPickerComponent, {
+      data: {color: this.teamColor()} 
+    });
+    console.log('DIALOG REF: ', dialogRef)
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
   }
-
 }
