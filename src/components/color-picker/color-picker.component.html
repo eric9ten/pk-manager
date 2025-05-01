@@ -4,7 +4,8 @@
     </div>
     <div class="color-picker_swatches">
         @for ( color of colors; track color.name) {
-            <div class="color-picker_swatch" [ngStyle]="{'backgroundColor': color.value}" (click)="onSwatchClick(color.value)">&nbsp;</div>
+            <div class="color-picker_swatch" [ngStyle]="{'backgroundColor': color.value}" (click)="onSwatchClick(color.value)"
+            >&nbsp;</div>
         }
     </div>
 </div>

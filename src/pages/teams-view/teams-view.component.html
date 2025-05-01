@@ -9,7 +9,7 @@
                 <div class="manager-page_content-container owned-teams">
                     <div class="manager-page_section-title owned-teams_section-title">
                         <h2>Owned</h2>
-                        <pkm-button-icon color="grey" [isDisabled]="false" (click)="snav.toggle()">
+                        <pkm-button-icon color="grey" [isDisabled]="false" (click)="sidenav.toggle()">
                             <pkm-add-circle-icon />
                         </pkm-button-icon>
                     </div>  
@@ -90,8 +90,8 @@
                 </div>
             </div>
         </mat-sidenav-content>
-        <mat-sidenav #snav position="end" mode="over" class="teams-page_sidenav">
-            <pkm-add-team-form />
+        <mat-sidenav #sidenav position="end" mode="over" class="teams-page_sidenav">
+            <pkm-add-team-form [sidenav]="sidenav"/>
         </mat-sidenav>
     </mat-sidenav-container>
 </div>

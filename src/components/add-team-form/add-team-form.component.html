@@ -73,12 +73,12 @@
                     <p class="colors_title">colors:</p>
                     <div>
                         <input type="text" class="colors_picker" id="homeColor" name="homeColor" formControlName="home" hidden />
-                        <div class="add-team_input-swatch" [ngStyle]="{'backgroundColor': homeColorValue}" (click)="onSwatchClick()"></div>
+                        <div class="add-team_input-swatch" id="homeColorSwatch" [ngStyle]="{'backgroundColor': homeColorValue}" (click)="onSwatchClick($event)"></div>
                         <mat-label class="colors_label" for="homeColor">home</mat-label>
                     </div>
                     <div>
                         <input type="text" class="colors_picker" id="awayColor" name="awayColor" formControlName="away" hidden/>
-                        <div class="add-team_input-swatch" [ngStyle]="{'backgroundColor': awayColorValue}" (click)="onSwatchClick()"></div>
+                        <div class="add-team_input-swatch" id="awayColorSwatch" [ngStyle]="{'backgroundColor': awayColorValue}" (click)="onSwatchClick($event)"></div>
                         <mat-label class="colors_label" for="awayColor">away</mat-label>
                     </div>
                 </div>

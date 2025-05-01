@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
@@ -22,6 +22,7 @@ import { AddTeamFormComponent } from "../../components/add-team-form/add-team-fo
 })
 
 export class TeamsViewComponent {
+  @ViewChild('sidenav') sidenav!: MatSidenav;
   title = "Teams"
   currentUser: any;
   teamsOwned: TTeam[] = []
@@ -37,21 +38,7 @@ export class TeamsViewComponent {
   checked = false
 
   private isLoggedIn = false
-  // private fb = inject(FormBuilder);
   private userId!: string
-
-  // addTeamForm = this.fb.group ({
-  //   name: ['', [Validators.required, Validators.minLength(4)]],
-  //   abbrev: ['', [Validators.required, Validators.maxLength(4)]],
-  //   ageGroup: ['', [Validators.required] ],
-  //   colors: this.fb.group ({
-  //     home: ['#000000'],
-  //     away: ['#ffffff']
-  //   }),
-  //   genGroup: [''],
-  //   owner: ['']
-
-  // })
 
   constructor(
     // private tokenStorageService: TokenStorageService, 
@@ -79,8 +66,7 @@ export class TeamsViewComponent {
     console.log('Viewing team:', team);
 
   }  
-  
-  
+
   private loadTeamsCoached(): void {
     this.teamService.getTeamsManagedDigest(this.userId)
       .subscribe({

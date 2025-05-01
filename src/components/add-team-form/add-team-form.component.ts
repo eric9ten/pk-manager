@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Input, model, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ButtonStandardComponent } from "../buttons/button-standard/button-standard.component";
 import { ColorPickerComponent } from '../color-picker/color-picker.component';
 import { TTeamColor } from '../../types/team.type';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'pkm-add-team-form',
@@ -15,25 +16,25 @@ import { TTeamColor } from '../../types/team.type';
   styleUrl: './add-team-form.component.scss'
 })
 export class AddTeamFormComponent {
-    teamColor = signal<TTeamColor>({name: 'black', value: '#000000'});
-    // teamAwayColor = signal<TTeamColor>({name: 'white', value: '#ffffff'});
-    private fb = inject(FormBuilder);
+  @Input() sidenav!: MatSidenav;
+  teamColor = signal<TTeamColor>({name: 'black', value: '#000000'});
+  private fb = inject(FormBuilder);
 
-    readonly dialog = inject(MatDialog);
-    protected isChecked = false;
-  
-    addTeamForm = this.fb.group ({
-      name: ['', [Validators.required, Validators.minLength(4)]],
-      abbrev: ['', [Validators.required, Validators.maxLength(4)]],
-      ageGroup: ['', [Validators.required] ],
-      colors: this.fb.group ({
-        home: ['#000000'],
-        away: ['#ffffff']
-      }),
-      genGroup: ['girls'],
-      owner: ['']
-  
-    })
+  readonly dialog = inject(MatDialog);
+  protected isChecked = false;
+
+  addTeamForm = this.fb.group ({
+    name: ['', [Validators.required, Validators.minLength(4)]],
+    abbrev: ['', [Validators.required, Validators.maxLength(4)]],
+    ageGroup: ['', [Validators.required] ],
+    colors: this.fb.group ({
+      home: ['#000000'],
+      away: ['#ffffff']
+    }),
+    genGroup: ['girls'],
+    owner: ['']
+
+  })
 
   constructor() {}
 
@@ -59,19 +60,26 @@ export class AddTeamFormComponent {
   }
 
   onSubmitClick(): void {
-    console.log('FORM VALUES: ', this.addTeamForm)
-    console.log('Submitting form...')
+    console.log('Submitting form...',  this.addTeamForm)
+    this.addTeamForm.reset();
+    this.sidenav.close();
   }
 
-  onSwatchClick(): void {
-    console.log('Swatch clicked!')
+  onSwatchClick(e: any): void {
     const dialogRef = this.dialog.open(ColorPickerComponent, {
       data: {color: this.teamColor()} 
     });
-    console.log('DIALOG REF: ', dialogRef)
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe(color => {
+      this.teamColor.set(color);
+
+      if (e.target.id === 'homeColorSwatch') {
+        this.addTeamForm.patchValue({colors: {home: color}})
+      }
+      
+      if (e.target.id === 'awayColorSwatch') {
+        this.addTeamForm.patchValue({colors: {away: color}})
+      }
     });
   }
 }

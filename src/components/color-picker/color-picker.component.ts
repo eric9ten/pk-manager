@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { TTeamColor } from '../../types/team.type';
 import { teamColors } from './colors.model';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'pkm-color-picker',
@@ -11,10 +12,12 @@ import { teamColors } from './colors.model';
 })
 
 export class ColorPickerComponent {
-
+  readonly dialogRef = inject(MatDialogRef<ColorPickerComponent>);
+  readonly data = inject<TTeamColor>(MAT_DIALOG_DATA);
+  readonly color = model(this.data.value);
   readonly colors: TTeamColor[] = teamColors;
 
-  onSwatchClick(hexColor: string): void {
-    console.log('Swatch clicked: ', hexColor);
+  onSwatchClick(color: string): void {
+    this.dialogRef.close(color);
   }
 }

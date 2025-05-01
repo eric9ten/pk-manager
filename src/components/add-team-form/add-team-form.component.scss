@@ -63,10 +63,20 @@
 
         &.input_abbrev {
             max-width: 150px;
+            text-transform: uppercase;
+
+            &::placeholder {
+                text-transform: none;
+            }
         }
 
         &.input_age {
             max-width: 90px;
+            text-transform: uppercase;
+
+            &::placeholder {
+                text-transform: none;
+            }
         }
 
         &.input-colors {
@@ -100,6 +110,12 @@
         width: 50px;
         height: 50px;
         border: 1px solid var(--c-orange-l3);
+                    
+        &:hover {
+            cursor: pointer;
+            -webkit-animation: grow 0.25s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+            animation: grow 0.25s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+        }
     }
 
     .swatch-background{
@@ -117,3 +133,24 @@
         justify-content: flex-end;
     }
 }
+
+@-webkit-keyframes grow {
+    0% {
+      -webkit-transform: scale(1);
+              transform: scale(1);
+    }
+    100% {
+      -webkit-transform: scale(1.25);
+              transform: scale(1.25);
+    }
+  }
+  @keyframes grow {
+    0% {
+      -webkit-transform: scale(1);
+              transform: scale(1);
+    }
+    100% {
+      -webkit-transform: scale(1.25);
+              transform: scale(1.25);
+    }
+  }
