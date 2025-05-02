@@ -16,6 +16,13 @@ export const routes: Routes = [
                 (c) => c.TeamsViewComponent
             ),
     },
+    {
+        path: 'games',
+        loadComponent: () =>
+            import('../pages/games-view/games-view.component').then(
+                (c) => c.GamesViewComponent
+            ),
+    },
     // { path: 'teams', component: TeamsViewComponent },
     {  path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];

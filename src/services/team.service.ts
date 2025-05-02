@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { TTeam } from '../types/team.type';
+import { TTeam } from '@customTypes/team.type';
 
-import { teams } from '../assets/test-teams';
+import { teams } from '@assets/test-data/test-teams';
 
 const baseUrl = 'https://api.example.com/TTeams'; // Replace with your actual API base URL
 
