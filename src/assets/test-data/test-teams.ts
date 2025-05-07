@@ -59,7 +59,7 @@ export const teams = [
         { id: "987654322", username: "manageremily", first: "Emily", last: "Stone", email: "emily.stone@example.com" }
       ],
       scorekeepers: [
-        { username: "scoremia", first: "Daniel", last: "Clark", email: "daniel.clark@example.com" }
+        { id: "987654332", username: "scoremia", first: "Daniel", last: "Clark", email: "daniel.clark@example.com" }
       ],
       colors: {
         home: "#228B22",

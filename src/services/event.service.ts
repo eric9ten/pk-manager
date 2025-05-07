@@ -11,7 +11,7 @@ const baseUrl = 'http://localhost:8080/api/games';
 @Injectable({
   providedIn: 'root'
 })
-export class GameService {
+export class EventService {
 
   constructor(private readonly http: HttpClient) { }
   
@@ -23,7 +23,7 @@ export class GameService {
     return this.http.get<TGame>(`${baseUrl}/${id}`)
   }
   
-  getGamesByOwner(userId: any): Observable<TGame[]> {
+  getEventsByOwner(userId: any): Observable<TGame[]> {
     return this.http.get<TGame[]>(`${baseUrl}/byowner/${userId}`)
   }
   

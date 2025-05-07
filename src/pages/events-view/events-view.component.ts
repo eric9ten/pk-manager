@@ -4,26 +4,29 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { TGame } from '../../types/game.type';
 import { TUser } from '@customTypes/user.type';
-import { GameService } from '@services/game.service';
+import { EventService } from '@services/event.service';
 import { CommonModule } from '@angular/common';
+import { ButtonIconComponent } from '@components/buttons/button-icon/button-icon.component';
+import { AddCircleIconComponent } from '@assets/icons/add-circle-icon/add-circle-icon.component';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
-  selector: 'pkm-games-view',
-  imports: [ CommonModule],
-  templateUrl: './games-view.component.html',
-  styleUrl: './games-view.component.scss'
+  selector: 'pkm-events-view',
+  imports: [ CommonModule, ButtonIconComponent, AddCircleIconComponent, MatTableModule],
+  templateUrl: './events-view.component.html',
+  styleUrl: './events-view.component.scss'
 })
-export class GamesViewComponent {
+export class EventsViewComponent {
   @Input() teamId?: string;
 
-  title = "Games"
+  title = "Events"
   isLoggedIn = signal<boolean>(true)
   currentUser: TUser | null = null
   userId?: string
   allGames: TGame[] = []
 
   upcomingGames: TGame[] = []
-  public upcomingDataSource = new MatTableDataSource<TGame>()
+  upcomingDataSource = new MatTableDataSource<TGame>()
   upcomingDisplayColumns: string[] = ['date', 'time', 'name', 'field', 'league', 'arrow']
   loadingUpcoming = signal<boolean>(false);
   upcomingError: any
@@ -40,16 +43,22 @@ export class GamesViewComponent {
   
   constructor(
     // private readonly tokenStorageService: TokenStorageService, 
-    private readonly gameService: GameService, 
+    private readonly eventService: EventService, 
     private fb: FormBuilder, 
     private dialog: MatDialog
   ) {
-    // this.isLoggedIn = !!this.tokenStorageService.getToken();
-    // if (this.isLoggedIn) {
+    this.isLoggedIn.set(true) //!!this.tokenStorageService.getToken();
+    if (this.isLoggedIn()) {
     //   this.currentUser = this.tokenStorageService.getUser()
-    //   this.userId = this.currentUser.id
-    // }
+      this.userId = '123456789' //this.currentUser.id
+    }
 
+  }
+
+  ngOnInit(): void {
+    console.log ("Loading Games...")
+    this.getAllGames();
+    
   }
 
   onSubmit() {
@@ -60,39 +69,46 @@ export class GamesViewComponent {
 
   }
 
-  ngOnInit(): void {
-    console.log ("Loading Games...")
-    this.getAllGames()
-    
-  }
-
-  getAllGames(){
-    this.gameService.getGamesByOwner(this.userId)
+  private getAllGames(): void {
+    this.eventService.getAllGames()
+    // this.eventService.getEventsByOwner(this.userId)
       .subscribe({
         next:(data) => {
           this.allGames = data
           this.loadingUpcoming.set(false);
           console.log('ALL GAMES: ', this.allGames)
   
-          // this.loadUpcomingGames()
-          // this.loadRecentGames()
+          this.loadUpcomingGames();
+          this.loadRecentGames();
         }
       })
-
   }
 
-  loadUpcomingGames() {
+  private loadUpcomingGames(): void {
     console.log("Loading Upcoming Games...")
     const today = new Date().getTime()
-    const upcoming = this.allGames.filter(( function(ug) {
+    const upcoming = this.allGames.filter(((ug) => {
+      console.log('UPCOMING EVENTS: ', ug)
       return new Date(ug.gameDate).getTime() > today
     
     }))
+    this.upcomingGames = upcoming.sort((a , b) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime());
+    this.upcomingDataSource = new MatTableDataSource(this.upcomingGames);
 
-    this.upcomingGames = upcoming.sort((a , b) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime())
-
-    this.upcomingDataSource = new MatTableDataSource(this.upcomingGames)
   }
+  
+  // private loadTeamsCoached(): void {
+  //   this.teamService.getTeamsManagedDigest(this.userId)
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.teamsCoached = data
+  //         this.coachedDataSource = new MatTableDataSource(data)
+  //         this.loadingCoached = false;
+  //         console.log ("Teams Coached Loaded.")
+  //       },
+  //      error: (e) => console.log(e)
+  //     })
+  // }
 
   loadRecentGames() {
     console.log("Loading Recent Games...")

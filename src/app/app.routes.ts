@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { TeamsViewComponent } from '../pages/teams-view/teams-view.component';
 
 export const routes: Routes = [
     {
@@ -19,8 +18,8 @@ export const routes: Routes = [
     {
         path: 'games',
         loadComponent: () =>
-            import('../pages/games-view/games-view.component').then(
-                (c) => c.GamesViewComponent
+            import('../pages/events-view/events-view.component').then(
+                (c) => c.EventsViewComponent
             ),
     },
     // { path: 'teams', component: TeamsViewComponent },

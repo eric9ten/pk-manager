@@ -15,13 +15,9 @@ export class TeamService {
 
   constructor(private http: HttpClient) { }
 
-  getAllTeams(): Observable<TTeam[]> {
+  getAllEvents(): Observable<TTeam[]> {
     return of(teams); //this.http.get<TTeam[]>(baseUrl);
   }
-
-  // get(id: any): Observable<TTeam> {
-  //   return this.http.get(`${baseUrl}/${id}`);
-  // }
   
   getByOwner(owner: any): Observable<TTeam[]> {
     return this.http.get<TTeam[]>(`${baseUrl}/byowner/${owner}`);

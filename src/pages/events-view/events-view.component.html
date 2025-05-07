@@ -1,17 +1,15 @@
-<div class="manager-page games-page">
+<div class="manager-page events-page">
     <section class="manager-page_title">
-        <h2>{{title}}</h2>
+        <h1>{{title}}</h1>
     </section>
-    <!-- <section class="managerAddSection">
-        <div class="managerAddSection_button">
-            <div class="titleWrapper_buttonWrapper"><button type="submit" class="buttonMed buttonGreen" (click)="addGame()">Add Game</button></div>
-        </div>
-    </section> -->
-    <section class="manager-page_content games-page_content">
-        <div class="manager-page_content-wrapper game-page_content-wrapper">
-            <div class="manager-page_content-container upcoming-games_container">
-                <div class="manager-page_section-title upcoming-games_section-title">
-                    <h3>Upcoming</h3>
+    <section class="manager-page_content events-page_content">
+        <div class="manager-page_content-wrapper events-page_content-wrapper">
+            <div class="manager-page_content-container upcoming-events_container">
+                <div class="manager-page_section-title upcoming-events_section-title">
+                    <h2>Upcoming</h2>
+                    <pkm-button-icon color="grey" [isDisabled]="false">
+                        <pkm-add-circle-icon />
+                    </pkm-button-icon>
                 </div>    
                 <div *ngIf="loadingUpcoming()">
                     Loading...
@@ -19,39 +17,39 @@
                 <div *ngIf="upcomingError">
                     Error :(
                 </div>
-                <!-- <table mat-table [dataSource]="upcomingDataSource" class="pkm-table gamesTable upcomingTable" *ngIf="upcomingGames.length > 0; else NoUpcoming">
+                <table mat-table [dataSource]="upcomingDataSource" class="pkm-table upcoming-table" *ngIf="upcomingGames.length > 0; else NoUpcoming">
                     <ng-container matColumnDef="date">
-                        <td mat-cell *matCellDef="let game" class="upcomingTable_gameDate">{{game.gameDate | date:'shortDate'}}</td>
+                        <td mat-cell *matCellDef="let game" class="upcoming-table_gameDate">{{game.gameDate | date:'shortDate'}}</td>
                     </ng-container>
                     <ng-container matColumnDef="time">
-                        <td mat-cell *matCellDef="let game" class="upcomingTable_gameTime">{{game.gameDate | date:'hh:mm'}}</td>
+                        <td mat-cell *matCellDef="let game" class="upcoming-table_gameTime">{{game.gameDate | date:'hh:mm'}}</td>
                     </ng-container>
                     <ng-container matColumnDef="name">
-                        <td mat-cell *matCellDef="let game"  class="upcomingTable_gameName">
+                        <td mat-cell *matCellDef="let game"  class="upcoming-table_gameName">
                             <span *ngFor="let team of game.teamAInfo">{{team.name}} </span>
                             <span *ngIf="game.homeTeam == 'a'; else teamBHome">vs.</span>
-                            <ng-template #teamBHome>@</ng-template>
+                            <ng-template #teamBHome>&#64;</ng-template>
                             <span *ngFor="let team of game.teamBInfo"> {{team.name}}</span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="field">
-                        <td mat-cell *matCellDef="let game"  class="upcomingTable_field">{{game.field}}</td>
+                        <td mat-cell *matCellDef="let game"  class="upcoming-table_field">{{game.field}}</td>
                     </ng-container>
                     <ng-container matColumnDef="league">
-                        <td mat-cell *matCellDef="let game"  class="upcomingTable_league">{{game.league}}</td>
+                        <td mat-cell *matCellDef="let game"  class="upcoming-table_league">{{game.league}}</td>
                     </ng-container>
                     <ng-container matColumnDef="arrow">
                         <td mat-cell class="pageTable_data teamsTable_nav"><span class="triangle triangle_right triangle_grey"></span></td>
                     </ng-container>
                     <tr mat-row *matRowDef="let row; columns: upcomingDisplayColumns;" class="pageTable_row gamesRow"></tr>
-                </table> -->
+                </table>
                 <ng-template #NoUpcoming>
-                    <p class="noResultsMsg">There are no upcoming games.</p>
+                    <p class="noResultsMsg">There are no upcoming events.</p>
                 </ng-template>
             </div>
-            <div class="manager-pageContent_container recentGames_container">
-                <div class="manager-pageContent_sectionTitle recentGames_sectionTitle">
-                    <h3>Recent</h3>
+            <div class="manager-page_content-container recent-events_container">
+                <div class="manager-page_section-title recent-events_section-title">
+                    <h2>Recent</h2>
                 </div>    
                 <div *ngIf="loadingRecent()">
                     Loading...
@@ -59,7 +57,7 @@
                 <div *ngIf="errorRecent">
                     Error :(
                 </div>
-                <!-- <table mat-table [dataSource]="recentDataSource" class="pkm-table gamesTable recentTable" *ngIf="recentGames.length > 0; else NoRecent">
+                <table mat-table [dataSource]="recentDataSource" class="pkm-table gamesTable recentTable" *ngIf="recentGames.length > 0; else NoRecent">
                     <ng-container matColumnDef="result">
                         <td mat-cell *matCellDef="let game" class="recentTable_gameResult">
                             <span *ngIf="this.teamAGoals == this.teamBGoals; else noDraw">
@@ -92,7 +90,7 @@
                         <td mat-cell *matCellDef="let game"  class="recentTable_gameName">
                             <span *ngFor="let team of game.teamAInfo">{{team.name}} </span>
                             <span *ngIf="game.homeTeam == 'a'; else teamBHome">vs.</span>
-                            <ng-template #teamBHome>@</ng-template>
+                            <ng-template #teamBHome>&#64;</ng-template>
                             <span *ngFor="let team of game.teamBInfo"> {{team.name}}</span>
                         </td>
                     </ng-container>
@@ -106,16 +104,16 @@
                         <td mat-cell *matCellDef="let game" class="pageTable_data teamsTable_nav"><span class="triangle triangle_right triangle_grey"></span></td>
                     </ng-container>
                     <tr mat-row *matRowDef="let row; columns: recentDisplayColumns;" class="pageTable_row gamesRow"></tr>
-                </table> -->
+                </table>
                 <ng-template #NoRecent>
-                    <p class="noResultsMsg">There are no recent games.</p>
+                    <p class="noResultsMsg">There are no recent events.</p>
                 </ng-template>
             </div>
         </div>
     </section>
-    <section class="managerAddSection">
+    <!-- <section class="managerAddSection">
         <div class="managerAddSection_button">
             <div class="titleWrapper_buttonWrapper"><button type="submit" class="buttonMed buttonGreen" (click)="addGame()">Add Game</button></div>
         </div>
-    </section>
+    </section> -->
 </div>
