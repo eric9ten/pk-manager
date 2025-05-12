@@ -9,10 +9,12 @@ import { CommonModule } from '@angular/common';
 import { ButtonIconComponent } from '@components/buttons/button-icon/button-icon.component';
 import { AddCircleIconComponent } from '@assets/icons/add-circle-icon/add-circle-icon.component';
 import { MatTableModule } from '@angular/material/table';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { AddEventFormComponent } from "../../components/add-event-form/add-event-form.component";
 
 @Component({
   selector: 'pkm-events-view',
-  imports: [ CommonModule, ButtonIconComponent, AddCircleIconComponent, MatTableModule],
+  imports: [CommonModule, ButtonIconComponent, AddCircleIconComponent, MatTableModule, MatSidenavModule, AddEventFormComponent],
   templateUrl: './events-view.component.html',
   styleUrl: './events-view.component.scss'
 })
@@ -137,6 +139,7 @@ export class EventsViewComponent {
       console.log("The sorted game date is: " + `${rg.gameDate}`);
     });*/
     this.recentDataSource = new MatTableDataSource(this.recentGames)
+    console.log("The recent games are: ", this.recentGames)
     this.loadingRecent.set(false);
   }
 
