@@ -16,7 +16,7 @@ export const routes: Routes = [
             ),
     },
     {
-        path: 'games',
+        path: 'events',
         loadComponent: () =>
             import('../pages/events-view/events-view.component').then(
                 (c) => c.EventsViewComponent
