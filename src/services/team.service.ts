@@ -15,7 +15,7 @@ export class TeamService {
 
   constructor(private http: HttpClient) { }
 
-  getAllEvents(): Observable<TTeam[]> {
+  getAllTeams(): Observable<TTeam[]> {
     return of(teams); //this.http.get<TTeam[]>(baseUrl);
   }
   

@@ -63,6 +63,15 @@
         text-align: right;
         vertical-align: middle;
     }
+
+    &_game-result {
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    &_game-score {
+        font-weight: 700;
+    }
 }
 
 .managerAddSection {

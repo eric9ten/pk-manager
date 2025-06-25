@@ -10,11 +10,11 @@ import { ButtonIconComponent } from '@components/buttons/button-icon/button-icon
 import { AddCircleIconComponent } from '@assets/icons/add-circle-icon/add-circle-icon.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { AddEventFormComponent } from "../../components/add-event-form/add-event-form.component";
+import { AddGameFormComponent } from "../../components/add-game-form/add-game-form.component";
 
 @Component({
   selector: 'pkm-events-view',
-  imports: [CommonModule, ButtonIconComponent, AddCircleIconComponent, MatTableModule, MatSidenavModule, AddEventFormComponent],
+  imports: [CommonModule, ButtonIconComponent, AddCircleIconComponent, MatTableModule, MatSidenavModule, AddGameFormComponent],
   templateUrl: './events-view.component.html',
   styleUrl: './events-view.component.scss'
 })

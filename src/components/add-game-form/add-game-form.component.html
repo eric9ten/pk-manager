@@ -1,0 +1,186 @@
+<div class="add-game">
+    <div class="add-game_title">
+        <h3>New Game</h3>
+    </div>
+    <form [formGroup]="addGameForm" (ngSubmit)="onSubmit()">
+        <div class="add-game_wrapper">
+            <div class="add-game_game-info">
+                <div class="add-game_form-section game-info">
+                    <div class="add-game_input-wrapper">
+                        <mat-label class="add-game_label" for="gameDate">Date<span class="required-flag">*</span></mat-label>
+                        <input matInput class="add-game_input" type="date" name="gameDate" placeholder="today()" formControlName="gameDate"  aria-label="Game Date" 
+                        tabindex="0" />
+                    </div>
+                    <div class="add-game_input-wrapper">
+                        <mat-label class="add-game_label" for="gameTime">Time</mat-label>
+                        <input matInput class="add-game_input" type="time" name="gameTime" placeholder="10:30 AM" formControlName="gameTime"  aria-label="Game Time" 
+                        tabindex="0"/>
+                    </div>
+                    <div class="add-game_input-wrapper">
+                        <mat-label class="add-game_label" for="location">Location</mat-label>
+                        <input matInput class="add-game_input" type="text" placeholder="Memorial Park - Field 2" name="location" formControlName="location" 
+                            aria-label="Game Location" tabindex="0"/>
+                    </div>
+                    <div class="add-game_input-wrapper">
+                        <mat-label class="add-game_label" for="gameType">Game Type</mat-label>
+                        <input matInput class="add-game_input" type="text" placeholder="Friendly, Tournament, etc." name="gameType" formControlName="gameType" 
+                            aria-label="Game Type" tabindex="0"/>
+                    </div>
+                    <div class="add-game_input-container">
+                        <div class="add-game_input-wrapper">
+                            <mat-label class="add-game_label" for="teamA">Team A<span class="required-flag">*</span></mat-label>
+                            <input type="text" matInput [matAutocomplete]="autoA" formControlName="teamA"
+                                name="teamA" class="add-game_input" required tabindex="0" placeholder="Team A Name">
+                            <mat-autocomplete #autoA="matAutocomplete" [displayWith]="displayFn">
+                                @for (team of filteredTeamsA | async; track team.id) {
+                                    <mat-option class="add-game_select-option" [value]="team">{{team.name}}</mat-option>
+                                }
+                            </mat-autocomplete>
+                        </div>
+                        <div class="add-game_alert input-error">
+                            <div *ngIf="f['teamA'].invalid && (f['teamA'].dirty || f['teamA'].touched)" class="alert alert-danger">
+                                <div *ngIf="f['teamA'].errors?.['required']">
+                                    Team Name is required.
+                                </div>
+                                <div *ngIf="f['teamA'].errors?.['minlength']">
+                                    Team Name must be at least 4 characters long.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-game_input-container">
+                        <div class="add-game_input-wrapper">
+                            <mat-label class="add-game_label" for="teamB">Team B<span class="required-flag">*</span></mat-label>
+                            <input type="text" matInput [matAutocomplete]="autoB" formControlName="teamB"
+                                name="teamB" class="add-game_input" required tabindex="0" placeholder="Team B Name">
+                            <mat-autocomplete #autoB="matAutocomplete" [displayWith]="displayFn">
+                                @for (team of filteredTeamsB | async; track team.id) {
+                                    <mat-option class="add-game_select-option" [value]="team">{{team.name}}</mat-option>
+                                }
+                            </mat-autocomplete>
+                        </div>
+                        <div class="content_wrapper_alert input-error">
+                            <div *ngIf="f['teamB'].invalid && (f['teamB'].dirty || f['teamB'].touched)" class="alert alert-danger">
+                                <div *ngIf="f['teamB'].errors?.['required']">
+                                    Team Name is required.
+                                </div>
+                                <div *ngIf="f['teamB'].errors?.['minlength']">
+                                    Team Name must be at least 4 characters long.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-game_input-wrapper add-game_home-radio-group">
+                        <div class="add-game_group-title">
+                            <mat-label for="homeTeam" class="add-game_label">Home Team</mat-label>
+                        </div>
+                        <div class="add-game_group-options">
+                            <div class="add-game_option-wrapper add-game_radio-input-wrapper">
+                                <input type="radio" id="teamA" name="homeTeam" value="a" checked (change)="onHomeTeamChange($event)"> 
+                                <label for="teamA" class="add-game_label">Team A</label>
+                            </div>
+                            <div class="add-game_option-wrapper add-game_radio-input-wrapper">
+                                <input type="radio" id="teamB" name="homeTeam" value="b" (change)="onHomeTeamChange($event)">
+                                <label for="teamB" class="add-game_label">Team B</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="add-game_team-info add-game_team-a">
+                <div class="add-game_form-heading">
+                    <h4>Team A</h4>
+                </div>
+                <div class="add-game_form-section">
+                    <div class="add-game_input-wrapper">
+                        <input type="text" matInput [matAutocomplete]="autoA" [formControl]="teamA"                            name="teamA" class="add-game_input" required tabindex="0" placeholder="Team A Name">
+                        <mat-autocomplete #autoA="matAutocomplete" [displayWith]="displayFn">
+                            @for (team of filteredTeamsA | async; track team.id) {
+                                <mat-option class="add-game_select-option" [value]="team">{{team.name}}</mat-option>
+                            }
+                        </mat-autocomplete>
+                    </div>
+                    <div class="add-game_alert">
+                        <div *ngIf="f['teamA'].invalid && (f['teamA'].dirty || f['teamA'].touched)" class="alert alert-danger">
+                            <div *ngIf="f['teamA'].errors?.['required']">
+                                Team Name is required.
+                            </div>
+                            <div *ngIf="f['teamA'].errors?.['minlength']">
+                                Team Name must be at least 4 characters long.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-game_input-wrapper">
+                        <mat-label class="add-game_label" for="teamAAbbrev">Team Abbreviation</mat-label>
+                        <input matInput class="add-game_input add-game_abbrev" type="text" name="teamAAbbrev" placeholder="UNH, RAR, LIV" formControlName="teamAAbbrev" 
+                            value={team.abbrev} aria-label="Your Team's Abbreviation" required tabindex="0"/>
+                    </div>
+                    <div class="add-game_wrapper_alert">
+                        <div *ngIf="f['teamAAbbrev'].invalid && (f['teamAAbbrev'].dirty || f['teamAAbbrev'].touched)" class="alert alert-danger">
+                            <div *ngIf="f['teamAAbbrev'].errors?.['required']">
+                                Team abbreviation is required.
+                            </div>
+                            <div *ngIf="f['teamAAbbrev'].errors?.['minlength'] || f['teamAAbbrev'].errors?.['maxlength']">
+                                Team Name must be between 3 and 4 characters long.
+                            </div>
+                        </div>
+                    </div>     
+                </div>
+            </div>
+            <div class="add-game_team-info add-game_team-b">
+                <div class="add-game_form-heading">
+                    <h4>Team B</h4>
+                </div>
+                <div class="add-game_form-section">
+                    <div class="add-game_input-wrapper">
+                        <input type="text" matInput class="content_input" name="teamB" required tabindex="0" >
+                        <mat-form-field class="combobox content_wrapper">
+                            <mat-label class="content_label" for="teamB">{{cmboPlaceholder}}</mat-label>
+                            <input type="text" matInput formControlName="teamB" [matAutocomplete]="autoB" 
+                                class="content_input" name="teamB" required tabindex="0"/>
+                            <mat-autocomplete #autoB="matAutocomplete" [displayWith]="displayFn" >
+                                <mat-option *ngFor="let team of filteredTeamsB | async" [value]="team">
+                                {{team.name}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                        <div class="content_wrapper_alert">
+                            <div *ngIf="f['teamB'].invalid && (f['teamB'].dirty || f['teamB'].touched)" class="alert alert-danger">
+                                <div *ngIf="f['teamB'].errors?.['required']">
+                                    Team Name is required.
+                                </div>
+                                <div *ngIf="f['teamB'].errors?.['minlength']">
+                                    Team Name must be at least 4 characters long.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-game_input-wrapper">
+                        <mat-label class="add-game_label" for="teamBAbbrev">Team Abbreviation</mat-label> 
+                        <input matInput class="add-game_input add-game_abbrev" type="text" name="teamBAbbrev" placeholder="MUN, BARC, BVB" formControlName="teamBAbbrev" 
+                            value={team.abbrev} style="text-transform:uppercase" aria-label="Opponent's Abbreviation" required tabindex="0"/>
+                    </div>
+                    <div class="content_wrapper_alert">
+                        <div *ngIf="f['teamBAbbrev'].invalid && (f['teamBAbbrev'].dirty || f['teamBAbbrev'].touched)" class="alert alert-danger">
+                            <div *ngIf="f['teamBAbbrev'].errors?.['required']">
+                                Team abbreviation is required.
+                            </div>
+                            <div *ngIf="f['teamBAbbrev'].errors?.['minlength'] || f['teamBAbbrev'].errors?.['maxlength']">
+                                Team Name must be between 3 and 4 characters long.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="add-game_form-actions">
+            <pkm-button-standard
+                label="Save"
+                color="green"
+                type="submit"
+                [isDisabled]="addGameForm.invalid"
+                (click)="onSubmit()"
+            ></pkm-button-standard>
+        </div>
+    </form>
+</div>
