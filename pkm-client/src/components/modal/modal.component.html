@@ -1,0 +1,13 @@
+
+@if(isShown()){
+    <div class="modal">
+        <div class="modal_container">
+        <div class="modal_heading">
+            <h2 class="modal_title">{{ title }}</h2>
+            <pkm-button-icon color="grey" (click)="onCloseClick()">X</pkm-button-icon>
+        </div>
+        <ng-content #modalContent></ng-content>
+        </div>
+    </div>
+    <div class="modal_overlay" (click)="onCloseClick()"></div>
+}

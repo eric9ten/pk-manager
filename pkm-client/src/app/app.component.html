@@ -1,0 +1,21 @@
+<div class="app-container">
+  <pkm-header></pkm-header>
+  <main class="main">
+    <div class="content">
+      <router-outlet />
+    </div>
+  </main>
+  <pkm-modal 
+    title="Register for an Account" 
+    [isShown]="modalService.modalShown()"
+  >
+    <pkm-register></pkm-register>
+  </pkm-modal>
+  <pkm-modal 
+    title="Login to PitchKeeper Manager" 
+    [isShown]="modalService.loginModalShown()"
+  >
+    <pkm-login></pkm-login>
+  </pkm-modal>
+  <pkm-footer></pkm-footer>
+</div>

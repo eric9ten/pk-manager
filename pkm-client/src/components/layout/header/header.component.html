@@ -1,0 +1,51 @@
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="assets/images/logo-1.png" alt="pitchkeeper manager" />
+        </div>
+        <div class="header-nav">
+            @if(isLoggedIn()){
+              <nav class="header-dropdown">
+                  <a class="header-nav_menu menu_trigger" (click)="isOpen = !isOpen" >Menu
+                    <span [ngClass]="isOpen ? 'gg-chevron-up' : 'gg-chevron-down'" ></span>
+                  </a>
+                  <ul
+                      class="menu"
+                      role="menu"
+                      *ngIf="isOpen"
+                  > 
+                      <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'dashboard']" (click)="isOpen = !isOpen" routerLinkActive="active" ariaCurrentWhenActive="page">Dashboard</a></li>
+                      <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'teams']" (click)="isOpen = !isOpen" routerLinkActive="active" ariaCurrentWhenActive="page">Teams</a></li>
+                      <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'events']" (click)="isOpen = !isOpen" routerLinkActive="active" ariaCurrentWhenActive="page">Events</a></li>
+                      <!-- <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'players']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Players</a></li> -->
+                      <!-- <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'users']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Users</a></li> -->
+                      <!-- <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'seasons']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Seasons</a></li> -->
+                      <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'messages']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Message Center</a></li>
+                      <li class="menu_item"><a routerLink="/profile" (click)="isOpen = !isOpen"><span>{{currentUser()!.email}}</span></a></li>
+                  </ul>
+              </nav>
+            }
+            @if(isLoggedIn()) {
+              <nav class="header-links header-links_loggedIn">
+                <ul>
+                  <li class="header-link header-link_orange" (click)="onLogoutClick()">
+                    Logout
+                  </li>
+                </ul>
+              </nav>
+            } @else {
+              <nav  class="header-links header-links_loggedIOut">
+                <ul>
+                  <li class="header-link header-link_green" (click)="onSignupClick()">
+                    Sign Up
+                  </li>
+                  <li class="header-link header-link_orange" (click)="onLoginClick()">
+                    Login
+                  </li>
+                </ul>
+              </nav>
+            }
+        </div>
+    </div>
+  </header>
+  

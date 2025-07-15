@@ -1,0 +1,81 @@
+<div class="login">
+    <div class="login_container">
+      <img
+        id="profile-img"
+        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+        class="profile-img-card"
+      />
+      @if(!isLoggedIn()){
+        <form
+          name="loginForm"
+          (ngSubmit)="loginForm.valid && onSubmit()"
+          novalidate
+          class="login_form"
+          [formGroup]="loginForm"
+        >
+          <div class="login_form-group">
+            <label for="email" class="login_form-control-label">Email</label>
+            <input
+              type="text"
+              class="login_form-control"
+              name="email"
+              formControlName="email"
+              required
+              [ngClass]="{ 'is-invalid': loginForm.get('email')?.touched && loginForm.get('email')?.invalid }"
+            />
+            @if(loginForm.get('email')?.touched && loginForm.get('email')?.errors) {
+              <div class="login_invalid-feedback">
+                @if(loginForm.get('email')?.errors?.['required']){
+                  <div
+                    role="alert"
+                  >
+                    Email is required!
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <div class="login_form-group">
+            <label 
+              for="password"
+              class="login_form-control-label">Password</label>
+            <input
+              type="password"
+              class="login_form-control"
+              name="password"
+              formControlName="password"
+              required
+              [ngClass]="{ 'is-invalid': loginForm.valid && loginForm.controls.password.errors }"
+            />
+            @if (loginForm.controls.password.errors && loginForm.valid) {
+            <div class="invalid-feedback">
+              @if (loginForm.controls.password.errors['required']) {
+              <div>Password is required</div>
+              }
+              @if (loginForm.controls.password.errors['minlength']) {
+              <div>Password must be at least 6 characters</div>
+              }
+            </div>
+            }
+          </div>
+          <div class="login_form-actions">
+            <pkm-button-standard type="submit" label="Login" color="green" [isDisabled]="!loginForm.valid"></pkm-button-standard>
+          </div>
+          @if (loginForm.valid && isLoginFailed()) {
+          <div class="login_alert">
+            <div class="login_alert-warning">
+              There was a problem with registration:
+            </div>
+            <div class="login_alert-error">{{ errorMessage() }}</div>
+          </div>
+          }
+        </form>
+      }
+      @if(isLoggedIn()) {
+        <div class="alert alert-success">
+          Logged in as {{ roles }}.
+        </div>
+      }
+    </div>
+  </div>
+  

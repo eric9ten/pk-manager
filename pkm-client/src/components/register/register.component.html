@@ -1,0 +1,123 @@
+<div class="register">
+  <div class="register_container">
+    <img
+      id="profile-img"
+      src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+      class="register_avatar"
+    />
+    @if (!isSuccessful()) {
+    <form
+      name="registerForm"
+      (ngSubmit)="registerForm.valid && onSubmit()"
+      novalidate
+      class="register_form"
+      [formGroup]="registerForm"
+    >
+      <div class="register_form-group">
+        <div class="register_form-control-wrapper">
+          <label for="first" class="register_form-control-label">First Name</label>
+          <input
+            type="text"
+            class="register_form-control"
+            name="first"
+            formControlName="first"
+            required
+            [ngClass]="{ 'is-invalid': registerForm.get('first')?.touched && registerForm.get('first')?.invalid }"
+          />
+        </div>
+        @if (registerForm.get('first')?.touched && registerForm.get('first')?.errors) {
+        <div class="register_invalid-container">
+          @if (registerForm.get('first')?.errors?.['required']) {
+          <span class="register_invalid-message">First name is required</span>
+          }
+        </div>
+        }
+      </div>
+      <div class="register_form-group">
+        <div class="register_form-control-wrapper">
+        <label for="last" class="register_form-control-label">Last Name</label>
+        <input
+          type="text"
+          class="register_form-control"
+          name="last"
+          formControlName="last"
+          required
+          [ngClass]="{ 'is-invalid': registerForm.get('last')?.touched && registerForm.get('last')?.invalid }"
+        />
+        </div>
+        @if (registerForm.get('last')?.touched && registerForm.get('last')?.errors) {
+        <div class="register_invalid-container">
+          @if (registerForm.get('last')?.errors?.['required']) {
+          <span class="register_invalid-message">Last name is required</span>
+          }
+        </div>
+        }
+      </div>
+      <div class="register_form-group">
+        <div class="register_form-control-wrapper">
+        <label 
+          for="email"
+          class="register_form-control-label">Email</label>
+        <input
+          type="email"
+          class="register_form-control"
+          name="email"
+          formControlName="email"
+          required
+          [ngClass]="{ 'is-invalid': registerForm.controls.email.valid && registerForm.controls.email.errors }"
+        />
+        </div>
+        @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors) {
+        <div class="register_invalid-container">
+          @if (registerForm.get('email')?.errors?.['required']) {
+          <span class="register_invalid-message">Email is required</span>
+          }
+          @if (registerForm.get('email')?.errors?.['email']) {
+          <span class="register_invalid-message">Email must be a valid email address</span>
+          }
+        </div>
+        }
+      </div>
+      <div class="register_form-group">
+        <div class="register_form-control-wrapper">
+        <label 
+          for="password"
+          class="register_form-control-label">Password</label>
+        <input
+          type="password"
+          class="register_form-control"
+          name="password"
+          formControlName="password"
+          required
+          [ngClass]="{ 'is-invalid': registerForm.valid && registerForm.controls.password.errors }"
+        />
+        </div>
+        @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors) {
+          <div class="register_invalid-container">
+            @if (registerForm.get('password')?.errors?.['required']) {
+            <span class="register_invalid-message">Password is required</span>
+            }
+            @if (registerForm.get('password')?.errors?.['minlength']) {
+            <span class="register_invalid-message">Password must be at least 6 characters</span>
+            }
+          </div>
+        }
+      </div>
+      <div class="register_form-actions">
+        <pkm-button-standard type="submit" label="Sign Up" color="green" [isDisabled]="!registerForm.valid"></pkm-button-standard>
+      </div>
+
+      @if (registerForm.valid && isSignUpFailed()) {
+      <div class="register_alert">
+        <div class="register_alert-warning">
+          There was a problem with registration:
+        </div>
+        <div class="register_alert-error">{{ errorMessage() }}</div>
+      </div>
+      }
+    </form>
+    } @else {
+    <div class="register_alert-success">Your registration is successful!</div>
+    }
+  </div>
+</div>
