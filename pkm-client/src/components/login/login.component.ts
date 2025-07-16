@@ -1,5 +1,5 @@
 // frontend/src/app/components/login/login.component.ts
-import { AfterViewInit, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { ModalService } from '@services/modal.service';
 import { StorageService } from '@services/storage.service';
 import { ButtonStandardComponent } from '@components/buttons/button-standard/button-standard.component';
 import { TLoginResponse } from '../../types/user.type';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'pkm-login',
@@ -16,12 +17,13 @@ import { TLoginResponse } from '../../types/user.type';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements AfterViewInit, OnDestroy {
+export class LoginComponent implements OnInit, AfterViewInit {
   private modalService = inject(ModalService);
   private storageService = inject(StorageService);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private loginStateSubscription: Subscription | null = null;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -34,18 +36,26 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
   roles: string[] = [];
 
+  ngOnInit(): void {
+    this.isLoggedIn.set(this.storageService.isLoggedIn());
+  }
+
+  
   ngAfterViewInit(): void {
-    if (this.storageService.isLoggedIn()) {
-      console.log('LOGIN: User is already logged in');
-      this.isLoggedIn.set(true);
+    this.isLoggedIn.set(this.storageService.isLoggedIn());
+    this.roles = this.storageService.getUser()?.roles || [];
+    console.log('LOGIN: ngAfterViewInit - isLoggedIn:', this.isLoggedIn(), 'user:', this.storageService.getUser());
+    this.loginStateSubscription = this.storageService.getLoginState().subscribe(isLoggedIn => {
+      this.isLoggedIn.set(isLoggedIn);
       this.roles = this.storageService.getUser()?.roles || [];
-    } else {
-      console.log('LOGIN: User is not logged in, initializing login component');
-      this.isLoggedIn.set(false);
-    }
+      console.log('LOGIN: loginState update - isLoggedIn:', isLoggedIn, 'user:', this.storageService.getUser());
+    });
   }
 
   ngOnDestroy(): void {
+    if (this.loginStateSubscription) {
+      this.loginStateSubscription.unsubscribe();
+    }
     console.log('LOGIN: Cleaning up login component');
   }
 
@@ -56,14 +66,17 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
       this.authService.login(email, password).subscribe({
         next: (data: TLoginResponse) => {
+          console.log('LOGIN: Backend response:', data);
           this.storageService.saveToken(data.accessToken);
-          this.storageService.saveUser({
+          const user = {
             id: data.id,
             first: data.first,
             last: data.last,
             email: data.email,
             roles: data.roles
-          });
+          };
+          this.storageService.saveUser(user);
+          console.log('LOGIN: Saved user:', user);
           this.isLoggedIn.set(true);
           this.isLoginFailed.set(false);
           this.roles = data.roles;
@@ -74,6 +87,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
           this.errorMessage.set(err.error?.message || 'Error during login');
           this.isLoginFailed.set(true);
           this.isLoggedIn.set(false);
+          console.error('LOGIN: Login error:', err);
         }
       });
     }
