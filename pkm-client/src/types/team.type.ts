@@ -2,7 +2,7 @@ import { TPlayer } from "./player.type";
 import { TUser } from "./user.type";
 
 export type TTeam = {
-    id: string;
+    _id?: string;
     name: string;
     abbrev: string;
     ageGroup?: string;

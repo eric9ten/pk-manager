@@ -1,5 +1,4 @@
-// frontend/src/app/components/login/login.component.ts
-import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,7 +16,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements AfterViewInit {
   private modalService = inject(ModalService);
   private storageService = inject(StorageService);
   private fb = inject(FormBuilder);
@@ -36,19 +35,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   roles: string[] = [];
 
-  ngOnInit(): void {
-    this.isLoggedIn.set(this.storageService.isLoggedIn());
-  }
-
-  
   ngAfterViewInit(): void {
     this.isLoggedIn.set(this.storageService.isLoggedIn());
     this.roles = this.storageService.getUser()?.roles || [];
-    console.log('LOGIN: ngAfterViewInit - isLoggedIn:', this.isLoggedIn(), 'user:', this.storageService.getUser());
     this.loginStateSubscription = this.storageService.getLoginState().subscribe(isLoggedIn => {
       this.isLoggedIn.set(isLoggedIn);
       this.roles = this.storageService.getUser()?.roles || [];
-      console.log('LOGIN: loginState update - isLoggedIn:', isLoggedIn, 'user:', this.storageService.getUser());
     });
   }
 
@@ -56,7 +48,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
     if (this.loginStateSubscription) {
       this.loginStateSubscription.unsubscribe();
     }
-    console.log('LOGIN: Cleaning up login component');
   }
 
   onSubmit(): void {
@@ -66,7 +57,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
       this.authService.login(email, password).subscribe({
         next: (data: TLoginResponse) => {
-          console.log('LOGIN: Backend response:', data);
           this.storageService.saveToken(data.accessToken);
           const user = {
             id: data.id,
@@ -76,7 +66,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
             roles: data.roles
           };
           this.storageService.saveUser(user);
-          console.log('LOGIN: Saved user:', user);
           this.isLoggedIn.set(true);
           this.isLoginFailed.set(false);
           this.roles = data.roles;

@@ -14,7 +14,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly AUTH_API = `${environment.apiRoot}auth/`;
+  private readonly AUTH_API = `${environment.apiRoot}/auth/`;
   
   constructor(private http: HttpClient) { }
 
@@ -38,16 +38,6 @@ export class AuthService {
     console.log('Signup request:', user); // Debug
     return this.http.post(`${this.AUTH_API}signup`, user, httpOptions);
   }
-
-  // register(user: TUser): Observable<TRegisterResponse> {
-  //   console.log('Signup request:', user);
-  //   return this.http.post<TRegisterResponse>(`${this.AUTH_API}signup`, user, httpOptions).pipe(
-  //     catchError(err => {
-  //       console.error('Signup error:', err);
-  //       throw new Error(err.message || 'Error during registration: Unable to reach server');
-  //     })
-  //   );
-  // }
 
   logout(): Observable<any> {
     localStorage.removeItem('accessToken');

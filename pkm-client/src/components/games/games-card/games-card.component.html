@@ -1,0 +1,115 @@
+<div class="pkm-card games-card">
+    <header class="pkm-card_heading">
+        <h2>{{title}}s</h2>
+    </header>
+    <div class="games-card_container">
+        <div class="games-card_wrapper">
+            <div class="games-card_title">
+                <h3>Upcoming</h3>
+            </div>
+            <div class="games-card_list">
+                @if(isLoading()) {
+                    <div class="loading">
+                        <p>Loading...</p>
+                    </div>
+                } @else if (error) {
+                <div *ngIf="error">
+                    Error :(
+                </div>
+                } @else if( upcomingGames && upcomingGames.length > 0) {
+                <table class="pkm-table games-card_table">
+                    @for (game of upcomingGames; track $index) {
+                        <tr class="games-card_table-row">
+                            <td class="games-card_table-date">{{game.gameDate | date:'shortDate'}}</td>
+                            <td class="games-card_table-time">{{game.gameDate | date:'hh:mm'}}</td>
+                            <td class="games-card_table-name">
+                                <span>{{ game.teamAName }}</span>
+                                @if(game.homeTeam == 'a') {
+                                    <span>vs.</span>
+                                } @else if(game.homeTeam == 'b') {
+                                    <span>&#64;</span>
+                                }
+                                <span>{{ game.teamBName }}</span>
+                            </td>
+                        </tr>
+                    }
+                </table>
+                } @else {
+                    <p class="pkm-table_no-results-msg">There are no upcoming events.
+                        <span class="pkm-table_add" (click)="onAddGameClick()">Add {{ title }}
+                            <mat-icon aria-hidden="false" aria-label="view team" fontIcon="add_circle"></mat-icon>
+                        </span>
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="games-card_wrapper">
+            <div class="games-card_title">
+                <h3>Recent</h3>
+            </div>
+            <div class="games-card_list games-card_table">
+                @if(isLoading()) {
+                    <div class="loading">
+                        <p>Loading...</p>
+                    </div>
+                } @if(error) {
+                    <div>
+                        Error :(
+                    </div>
+                } @else if( recentGames && recentGames.length > 0) {
+                    <table class="pkm-table">
+                        @for (game of recentGames; track $index) {
+                            <tr class="games-card_table-row recent-table">
+                                <td class="games-card_game-result">
+                                    @if (this.teamAGoals == this.teamBGoals) {
+                                        <span ngClass="draw">Draw</span>
+                                    } @else if(this.teamAGoals > this.teamBGoals) {
+                                        <span ngClass="win">Win</span>
+                                    } @else {
+                                        <span ngClass="loss">Loss</span>
+                                    }
+                                </td>
+                                <td class="games-card_game-score" >
+                                    @if(this.teamAGoals == this.teamBGoals) {
+                                        <span ngClass="draw">{{ this.teamAGoals }} - {{ this.teamBGoals }}</span>
+                                    } @else if(this.teamAGoals > this.teamBGoals) {
+                                        <span ngClass="win">{{ this.teamAGoals }} - {{ this.teamBGoals }}</span>
+                                    } @else {
+                                        <span ngClass="loss">{{ this.teamAGoals }} - {{ this.teamBGoals }}</span>
+                                    }
+                                </td>
+                                <td class="games-card_table-name">
+                                    <span>{{ game.teamAName }}</span>
+                                    @if(game.homeTeam == 'a') {
+                                        <span>vs.</span>
+                                    } @else if(game.homeTeam == 'b') {
+                                        <span>&#64;</span>
+                                    }
+                                    <span>{{ game.teamBName }}</span>
+                                </td>
+                                <td class="games-card_table-location">{{ game.location }}</td>
+                                <td class="games-card_table-date">{{game.gameDate | date:'shortDate'}}</td>
+                            </tr>
+                        }
+                    </table>
+                } @else {
+                    <p class="pkm-table_no-results-msg">There are no recent events.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <footer class="games-card_footer">
+        <div class="games-card_footer-link">
+            <a [routerLink]="[`/${currentUser()!.id}`, 'events']" title="All Events">All Events</a>
+        </div>
+        <div class="games-card_footer-button">
+            <pkm-button-standard
+                label="Add Event"
+                color="green"
+                type="button"
+                [isDisabled]="false"
+                (click)="onAddGameClick()">
+            </pkm-button-standard>
+        </div>
+    </footer>
+</div>

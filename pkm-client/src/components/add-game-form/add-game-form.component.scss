@@ -90,12 +90,16 @@
 
     &_input {
         padding: .25rem;
-        color: var(--c-grey-l1);
+        color: var(--c-grey-d2);
+        font-family: var(--font3);
+        font-weight: 600;
+
     }
 
     input::placeholder {
         color: var(--c-grey-l2);
         font-size: 0.875rem;
+        font-weight: 400;
     }
 
     &_home-radio-group {

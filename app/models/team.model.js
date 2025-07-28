@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const teamSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
+    {
+        name: {
+        type: String,
             required: true,
         },
         abbrev: {
@@ -17,6 +17,16 @@ const teamSchema = new mongoose.Schema(
         genGroup: {
             type: String,
             required: true,
+        },
+        colors: {
+            home: { 
+                type: String, 
+                default: '#000000' 
+            },
+            away: { 
+                type: String, 
+                default: '#ffffff' 
+            },
         },
         players: [
             { 

@@ -196,42 +196,41 @@ exports.findAllByOwner = (req, res) => {
 
 // Find all published Games by Team
 exports.findAllByTeam = (req, res) => {
-    const teamId = req.params.teamId;
-    Game.aggregate([
-      {
-        '$match': {
-          '$or': [
-            {
-              'teamA': ObjectId(teamId)
-            }, {
-              'teamB': ObjectId(teamId)
-            }
-          ]
-        }
-      },{
-        '$lookup': {
-          'from': 'teams', 
-          'localField': 'teamA', 
-          'foreignField': '_id', 
-          'as': 'teamAInfo'
-        }
-      }, {
-        '$lookup': {
-          'from': 'teams', 
-          'localField': 'teamB', 
-          'foreignField': '_id', 
-          'as': 'teamBInfo'
-        }
+  const teamId = req.params.teamId;
+  Game.aggregate([
+    {
+      '$match': {
+        '$or': [
+          {
+            'teamA': ObjectId(teamId)
+          }, {
+            'teamB': ObjectId(teamId)
+          }
+        ]
       }
-    ])
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving teams."
-        });
-      });
-  
+    },{
+      '$lookup': {
+        'from': 'teams', 
+        'localField': 'teamA', 
+        'foreignField': '_id', 
+        'as': 'teamAInfo'
+      }
+    }, {
+      '$lookup': {
+        'from': 'teams', 
+        'localField': 'teamB', 
+        'foreignField': '_id', 
+        'as': 'teamBInfo'
+      }
+    }
+  ])
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving teams."
+    });
+  });
 };

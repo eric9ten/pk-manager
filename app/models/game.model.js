@@ -27,9 +27,12 @@ const Game = mongoose.model(
         ref: 'User',
         required: true
     },
-    scorekeeper:  { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User',
+    scorekeepers:  { 
+        type: Array, 
+        scorekeepers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
     },
   },
   { timestamps: true }

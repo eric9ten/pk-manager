@@ -1,0 +1,146 @@
+<mat-sidenav-container>
+  <mat-sidenav-content>
+    <section class="manager-page team-detail">
+      @if (team | async; as teamData) {
+        <div class="team-detail_top-section">
+          <form [formGroup]="teamForm" class="team-detail_edit-form">
+            <div class="manager-page_title team-detail_heading">
+              <div class="manager-page_left">
+                <a [routerLink]="[`/${currentUser()!.id}`, 'teams']">
+                  <mat-icon aria-hidden="false" aria-label="view team" fontIcon="arrow_circle_left" class="material-icons material-icons-outlined"></mat-icon>
+                </a>
+                <h1><input type="text" formControlName="name" value="{{ teamData.name }}" /></h1>
+              </div>
+              <h2><input type="text" size="3" formControlName="abbrev" value="{{ teamData.abbrev }}" /></h2>
+            </div>
+            <div class="team-detail_team-info-content">
+              <div class="team-detail_left-section">
+                <div class="team-detail_division">
+                  <p>Division:
+                    <span class="team-detail_age"><input type="text" formControlName="ageGroup" value="{{ teamData.ageGroup }}" /></span>
+                    @if (isEditing()) {
+                      <span class="select-wrapper">
+                        <select name="gender" formControlName="genGroup" id="gender">
+                          <option value="boys">boys</option>
+                          <option value="girls">girls</option>
+                          <option value="co-ed">co-ed</option>
+                        </select>
+                      </span>
+                    } @else {
+                      <span class="team-detail_gender">{{ teamData.genGroup }}</span>
+                    }
+                  </p>
+                </div>
+                <div class="team-detail_colors">
+                  <p class="colors_label">home</p>
+                  @if (isEditing()) {
+                    <div
+                      class="colors_square_enabled"
+                      [style.background-color]="teamForm.controls.colors.controls.home.value"
+                      id="homeColor"
+                      (click)="onColorClick($event)"
+                    ></div>
+                  } @else {
+                    <div
+                      class="colors_square"
+                      [style.background-color]="teamForm.controls.colors.controls.home.value"
+                      id="homeColor"
+                    ></div>
+                  }
+                  <p class="colors_label">away</p>
+                  @if (isEditing()) {
+                    <div
+                      class="colors_square_enabled"
+                      [style.background-color]="teamForm.controls.colors.controls.away.value"
+                      id="awayColor"
+                      (click)="onColorClick($event)"
+                    ></div>
+                  } @else {
+                    <div
+                      class="colors_square"
+                      [style.background-color]="teamForm.controls.colors.controls.away.value"
+                      id="awayColor"
+                    ></div>
+                  }
+                </div>
+              </div>
+              <div class="team-detail_right-section">
+                <div class="team-detail_staff">
+                  <div class="team-detail_coaches">
+                    <h3 class="team-detail_staff-title">Coaches:</h3>
+                    @if (teamData.managers && teamData.managers.length > 0) {
+                      <span class="team-detail_coaches-list">
+                        <ul>
+                          @for (manager of teamData.managers; track $index) {
+                            <li>{{ manager.first }} {{ manager.last }}</li>
+                          }
+                        </ul>
+                      </span>
+                    } @else {
+                      <p>No Coaches Assigned</p>
+                    }
+                  </div>
+                  <div class="team-detail_scorekeepers">
+                    <h3 class="team-detail_staff-title">Scorekeepers:</h3>
+                    @if (teamData.scorekeepers && teamData.scorekeepers.length > 0) {
+                      <span class="team-detail_scorekeepers-list">
+                        <ul>
+                          @for (scorekeeper of teamData.scorekeepers; track $index) {
+                            <li>{{ scorekeeper.first }} {{ scorekeeper.last }}</li>
+                          }
+                        </ul>
+                      </span>
+                    } @else {
+                      <p>No Scorekeepers Assigned</p>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="team-detail_team-info-actions">
+              @if (isEditing()) {
+                <pkm-button-text-icon label="cancel" (click)="onCancelClick()">
+                  <mat-icon aria-hidden="false" aria-label="cancel editing" fontIcon="cancel" class="material-icons material-icons-outlined"></mat-icon>
+                </pkm-button-text-icon>
+                <pkm-button-text-icon label="save" (click)="onSaveClick()">
+                  <mat-icon aria-hidden="false" aria-label="save edits" fontIcon="download_done" class="material-icons material-icons-outlined"></mat-icon>
+                </pkm-button-text-icon>
+              } @else {
+                <pkm-button-text-icon label="edit" (click)="onEditClick()">
+                  <mat-icon aria-hidden="false" aria-label="edit team" fontIcon="edit" class="material-icons material-icons-outlined"></mat-icon>
+                </pkm-button-text-icon>
+              }
+            </div>
+          </form>
+        </div>
+        <div class="team-detail_schedule-roster">
+          <div class="team-detail_events-container">
+            <pkm-games-card
+              [isOnDash]="false"
+              [teamId]="teamId!"
+              (addGameEvent)="sidenav.toggle()"
+            ></pkm-games-card>
+          </div>
+          <div class="team-detail_roster-container">
+            <h2 class="team-detail_section-heading">Roster</h2>
+            <pkm-players-card></pkm-players-card>
+          </div>
+        </div>
+      } @else if (loadingTeam()) {
+        <div class="loading-team">
+          <p>Loading Team...</p>
+        </div>
+      } @else if (error) {
+        <div class="error">
+          <p>Error: {{ error }}</p>
+        </div>
+      }
+    </section>
+  </mat-sidenav-content>
+  <mat-sidenav #sidenav position="end" mode="over" class="manager-page_sidenav">
+    <div class="manager-page_sidenav-title">
+      <h2>Add Event</h2>
+    </div>
+    <pkm-add-game-form></pkm-add-game-form>
+  </mat-sidenav>
+</mat-sidenav-container>

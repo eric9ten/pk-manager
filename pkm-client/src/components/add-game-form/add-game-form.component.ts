@@ -1,59 +1,76 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSidenav } from '@angular/material/sidenav';
+import { startWith, map, Observable, forkJoin, of } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 import { TTeam } from '@customTypes/team.type';
 import { TUser } from '@customTypes/user.type';
-import { startWith, map, Observable } from 'rxjs';
-import { CommonModule } from '@angular/common';
 import { ButtonStandardComponent } from "../buttons/button-standard/button-standard.component";
 import { TeamService } from '@services/team.service';
+import { TokenStorageService } from '@services/token-storage.service';
+import { EventService } from '@services/event.service';
+import { ModalService } from '@services/modal.service';
 
 @Component({
   selector: 'pkm-add-game-form',
-  imports: [CommonModule, MatAutocompleteModule, MatSlideToggleModule, MatFormFieldModule, ReactiveFormsModule, 
-    ButtonStandardComponent, ButtonStandardComponent, MatInputModule
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatAutocompleteModule,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    ButtonStandardComponent,
+    MatInputModule,
   ],
   templateUrl: './add-game-form.component.html',
-  styleUrl: './add-game-form.component.scss'
+  styleUrls: ['./add-game-form.component.scss'],
 })
-
 export class AddGameFormComponent {
+  private readonly teamService = inject(TeamService);
+  private readonly tokenStorageService = inject(TokenStorageService);
+  private readonly eventService = inject(EventService);
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly modalService = inject(ModalService);
   private _snackBar = inject(MatSnackBar);
-  
+
+  @Input() sidenav!: MatSidenav;
+
+  addGameForm!: FormGroup;
+  error = '';
   teamsA!: TTeam[];
   teamsB!: TTeam[];
   filteredTeamsA!: Observable<TTeam[]>;
   filteredTeamsB!: Observable<TTeam[]>;
-                          
   isLoggedIn = signal<boolean>(false);
   private currentUser!: TUser;
   private userId?: string;
-
-  addGameForm: FormGroup;
 
   title = "Add Game";
   cmboPlaceholder = "Select a team...";
   fullDate: string | null = null;
 
-  constructor(
-    private fb: FormBuilder, 
-    private readonly teamService: TeamService,
-    // private gameHelperService: GamesHelperService,
-    // private tokenStorageService: TokenStorageService,
-  ){
-    
-    this.isLoggedIn.set(true) //!!this.tokenStorageService.getToken();
-    if (this.isLoggedIn()) {
-    //   this.currentUser = this.tokenStorageService.getUser()
-      this.userId = '123456789' //this.currentUser.id
+  constructor() {
+    if (!this.tokenStorageService.getToken()) {
+      this.error = 'User not logged in';
+      console.error('AddGameFormComponent: Not logged in');
+      this.router.navigate(['/home']);
+      return;
+    } else {
+      this.isLoggedIn.set(true);
+      this.currentUser = this.tokenStorageService.getUser();
+      this.userId = this.currentUser.id;
     }
-        
-    this.addGameForm = fb.group({
+
+    this.addGameForm = this.fb.group({
       gameDate: ['', Validators.required],
       gameTime: [null],
       teamA: ['', Validators.required],
@@ -61,60 +78,60 @@ export class AddGameFormComponent {
       homeTeam: ['a'],
       location: [],
       gameType: [],
-      owner: []
-    })
-
+      owner: [],
+    });
   }
 
   ngOnInit(): void {
-    console.log ('Loading all teams...')
     this.loadTeams();
   }
 
   displayFn(team: TTeam): string {
     return team && team.name ? team.name : '';
   }
-  
+
   get f(): { [key: string]: AbstractControl } {
     return this.addGameForm.controls;
   }
-    
 
   private loadTeams(): void {
-     //getAllTeamsAllRolesForSelect(this.currentUser.id);
+    this.teamService.getAllTeams().subscribe({
+      next: (teams) => {
+        this.teamsA = teams;
+        this.teamsB = teams;
+        this.filteredTeamsA = this.addGameForm.controls['teamA'].valueChanges.pipe(
+          startWith(''),
+          map(value => (typeof value === 'string' ? value : (value && value.name) || '')),
+          map(name => {
+            const filtered = name ? this._filterA(name) : this.teamsA.slice();
+            const teamBValue = this.addGameForm.controls['teamB'].value;
+            const filteredExcludingTeamB = teamBValue && teamBValue._id !== '00000000'
+              ? filtered.filter(team => team._id !== teamBValue._id)
+              : filtered;
+            const sortedTeams = filteredExcludingTeamB.sort((a, b) => a.name.localeCompare(b.name));
+            return [{ _id: '00000000', name: 'TBD', abbrev: 'TBD' }, ...sortedTeams];
+          })
+        );
 
-    this.teamService.getAllTeams().subscribe( (teams) => {
-      this.teamsA = teams;
-      this.teamsB = teams;
-      this.filteredTeamsA = this.addGameForm.controls['teamA'].valueChanges.pipe(
-        startWith(''),
-        map(value => (typeof value === 'string' ? value : value.name)),
-        map(name => {
-          const filtered = name ? this._filterA(name) : this.teamsA.slice();
-          const teamBValue = this.addGameForm.controls['teamB'].value;
-          const filteredExcludingTeamB = teamBValue && teamBValue.id !== '00000000'
-            ? filtered.filter(team => team.id !== teamBValue.id)
-            : filtered;
-          const sortedTeams = filteredExcludingTeamB.sort((a, b) => a.name.localeCompare(b.name));
-          return [{ id: '00000000', name: 'TBD',  abbrev: 'TBD'}, ...sortedTeams];
-        })
-      )
-
-      this.filteredTeamsB = this.addGameForm.controls['teamB'].valueChanges.pipe(
-        startWith(''),
-        map(value => (typeof value === 'string' ? value : value.name)),
-        map(name => {
-          const filtered = name ? this._filterB(name) : this.teamsB.slice();
-          const teamAValue = this.addGameForm.controls['teamB'].value;
-          const filteredExcludingTeamA = teamAValue && teamAValue.id !== '00000000'
-            ? filtered.filter(team => team.id !== teamAValue.id)
-            : filtered;
-          const sortedTeams = filteredExcludingTeamA.sort((a, b) => a.name.localeCompare(b.name));
-          return [{ id: '00000000', name: 'TBD',  abbrev: 'TBD'}, ...sortedTeams];
-        })
-      )
+        this.filteredTeamsB = this.addGameForm.controls['teamB'].valueChanges.pipe(
+          startWith(''),
+          map(value => (typeof value === 'string' ? value : (value && value.name) || '')),
+          map(name => {
+            const filtered = name ? this._filterB(name) : this.teamsB.slice();
+            const teamAValue = this.addGameForm.controls['teamA'].value;
+            const filteredExcludingTeamA = teamAValue && teamAValue._id !== '00000000'
+              ? filtered.filter(team => team._id !== teamAValue._id)
+              : filtered;
+            const sortedTeams = filteredExcludingTeamA.sort((a, b) => a.name.localeCompare(b.name));
+            return [{ _id: '00000000', name: 'TBD', abbrev: 'TBD' }, ...sortedTeams];
+          })
+        );
+      },
+      error: (err) => {
+        console.error('AddGameFormComponent: Error loading teams', err);
+        this._openSnackBar('Failed to load teams', 'Close');
+      },
     });
-
   }
 
   onHomeTeamChange($event: Event): void {
@@ -122,16 +139,98 @@ export class AddGameFormComponent {
     this.addGameForm.patchValue({ homeTeam: homeTeam });
   }
 
-  onSubmit() {
-    this.addGameForm.patchValue({owner: this.userId})
+  onSubmit(): void {
+    this._checkDateTime();
+    if (!this.addGameForm.valid || !this.fullDate) {
+      console.warn('AddGameFormComponent: Form is invalid or date is missing');
+      this._openSnackBar('Please fill in all required fields', 'Close');
+      return;
+    }
 
-    this._checkDateTime()
-    this.addGameForm.patchValue({gameDate: this.fullDate})
-    console.log('Form submitted with values:', this.addGameForm.value);
-    // this.addGame()
+    this.addGameForm.patchValue({ owner: this.userId, gameDate: this.fullDate });
+    console.log('AddGameFormComponent: Form submitted with values:', this.addGameForm.value);
+    this.addGame();
+  }
 
-    this._openSnackBar('Game Added', 'Close');
+  private addGame(): void {
+    if (!this.userId) {
+      console.error('AddGameFormComponent: User ID is not available, cannot create game');
+      this._openSnackBar('Error: User not logged in', 'Close');
+      return;
+    }
 
+    const teamAValue = this.addGameForm.value.teamA;
+    const teamBValue = this.addGameForm.value.teamB;
+    const teamA$ = this.resolveTeam(teamAValue);
+    const teamB$ = this.resolveTeam(teamBValue);
+
+    forkJoin([teamA$, teamB$]).subscribe({
+      next: ([teamAId, teamBId]) => {
+        const formValue = {
+          ...this.addGameForm.value,
+          owner: this.userId,
+          teamA: teamAId,
+          teamB: teamBId,
+        };
+
+        console.log('AddGameFormComponent: Sending game data', formValue);
+        this.eventService.createGame(formValue).subscribe({
+          next: (data) => {
+            console.log('AddGameFormComponent: Game created', data);
+            this._openSnackBar('Game created successfully', 'Close');
+            this.addGameForm.reset({
+              gameDate: '',
+              gameTime: null,
+              teamA: '',
+              teamB: '',
+              homeTeam: 'a',
+              location: '',
+              gameType: '',
+              owner: '',
+            });
+            this.sidenav.close();
+          },
+          error: (error) => {
+            console.error('AddGameFormComponent: Error creating game', error);
+            this._openSnackBar('Error creating game: ' + error.error?.message, 'Close');
+          },
+        });
+      },
+      error: (err) => {
+        console.error('AddGameFormComponent: Error resolving teams', err);
+        this._openSnackBar('Error creating teams', 'Close');
+      },
+    });
+  }
+
+  private resolveTeam(teamValue: TTeam | string): Observable<string | undefined> {
+    if (typeof teamValue !== 'string') {
+      const teamId = teamValue._id || '00000000';
+      return of(teamId);
+    }
+
+    const existingTeam = this.teamsA.find(team => team.name.toLowerCase() === teamValue.toLowerCase());
+    if (existingTeam) {
+      return of(existingTeam._id);
+    }
+
+    const newTeam = {
+      name: teamValue,
+      abbrev: this.teamService.getAbbreviation(teamValue),
+      ageGroup: 'Unknown',
+      genGroup: 'Unknown',
+      owner: this.userId,
+    };
+
+    console.log('AddGameFormComponent: Creating new team', newTeam);
+    return this.teamService.createTeam(newTeam).pipe(
+      map(team => {
+        console.log('AddGameFormComponent: New team created', team);
+        this.teamsA = [...this.teamsA, team];
+        this.teamsB = [...this.teamsB, team];
+        return team._id;
+      })
+    );
   }
 
   private _checkDateTime(): void {
@@ -139,13 +238,15 @@ export class AddGameFormComponent {
     const gameTimeControl = this.addGameForm.controls['gameTime'];
 
     if (!gameDateControl.value) {
-      console.warn('No valid game date provided');
+      console.warn('AddGameFormComponent: No valid game date provided');
+      this.fullDate = null;
       return;
     }
 
     const dateParts = gameDateControl.value.split('-').map((part: string) => parseInt(part, 10));
     if (dateParts.length !== 3 || dateParts.some(isNaN)) {
-      console.warn('Invalid date format:', gameDateControl.value);
+      console.warn('AddGameFormComponent: Invalid date format:', gameDateControl.value);
+      this.fullDate = null;
       return;
     }
 
@@ -154,13 +255,13 @@ export class AddGameFormComponent {
     let isPM = true;
 
     if (gameTimeControl.value) {
-      console.log('Game time provided:', gameTimeControl.value);
       const timeParts = gameTimeControl.value.split(':').map((part: string) => parseInt(part, 10));
       if (timeParts.length >= 2 && !timeParts.some(isNaN)) {
         hour = timeParts[0];
         minute = timeParts[1];
       } else {
-        console.warn('Invalid time format:', gameTimeControl.value);
+        console.warn('AddGameFormComponent: Invalid time format:', gameTimeControl.value);
+        this.fullDate = null;
         return;
       }
     }
@@ -179,25 +280,24 @@ export class AddGameFormComponent {
       const utcDate = Date.UTC(year, month, day, hour, minute);
       this.fullDate = new Date(utcDate).toISOString();
     } catch (error) {
-      console.error('Error creating date:', error);
+      console.error('AddGameFormComponent: Error creating date:', error);
       this.fullDate = null;
     }
   }
 
-  private _filterA(name: string ): TTeam[] {
-    const filterValue = name ? name.toLowerCase() : ''
-
+  private _filterA(name: string): TTeam[] {
+    const filterValue = name ? name.toLowerCase() : '';
     return this.teamsA.filter((team: TTeam) => team.name!.toLowerCase().includes(filterValue));
   }
 
-  private _filterB(name: string ): TTeam[] {
-    const filterValue = name ? name.toLowerCase() : ''
-
-    return this.teamsB.filter(team => team.name!.toLowerCase().includes(filterValue))
+  private _filterB(name: string): TTeam[] {
+    const filterValue = name ? name.toLowerCase() : '';
+    return this.teamsB.filter(team => team.name!.toLowerCase().includes(filterValue));
   }
 
   private _openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action);
+    this._snackBar.open(message, action, {
+      duration: 3000,
+    });
   }
-
 }

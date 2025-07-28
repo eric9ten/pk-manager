@@ -1,0 +1,103 @@
+.games-card {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 100%;
+
+    &_container {  
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 50% 50%;
+        width: 100%;
+        max-height: 700px;
+        overflow-y: scroll;
+    }
+
+    &_wrapper {
+        padding-bottom: 1rem;
+        width: 100%;
+
+        &:first-of-type {
+            border-bottom: 1px solid var(--c-grey-l2);
+        }
+    }
+
+    &_title {
+        display: flex;
+        justify-content: flex-start;
+        padding: 1rem 2rem .5rem;
+        border-bottom: 1px solid var(--c-grey-l2);
+
+        h3 {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    &_list {
+        width: 100%;
+    }
+
+    &_table {
+        // max-width: 635px;
+
+    }
+
+    &_table-row {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    &_table-date {
+        width: 10%;
+        min-width: 75px;
+        font-weight: 700;
+    }
+
+    &_table-time {
+        width: 10%;
+        min-width: 75px;
+        font-weight: 700;
+    }
+    &_table-name {
+        display: flex;
+        gap: 0.5rem;
+
+        span {
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:nth-of-type(2) {
+                min-width: 1.5rem;
+            }
+        }
+
+    }
+
+    .recent-table {
+        td {
+            width: 15%;
+
+            &:nth-of-type(3) {
+                width: 40%;
+            }
+        }
+    }
+
+    .recentWrapper {
+        border-top: 1px solid var(--c-grey-l2);
+
+    }
+
+    &_footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem 1.25rem;
+
+    }
+
+}

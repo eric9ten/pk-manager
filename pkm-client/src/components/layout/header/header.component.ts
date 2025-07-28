@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { TUser } from '@customTypes/user.type';
 import { Subscription } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,15 +31,11 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.isLoggedIn.set(this.storageService.isLoggedIn());
     this.currentUser.set(this.storageService.getUser());
-    console.log('Header init - isLoggedIn:', this.isLoggedIn(), 'currentUser:', this.currentUser());
     this.loginStateSubscription = this.storageService.getLoginState().subscribe(isLoggedIn => {
       this.isLoggedIn.set(isLoggedIn);
       this.currentUser.set(this.storageService.getUser());
       this.userId = this.currentUser()?.id || null;
-      console.log('Header login state update - isLoggedIn:', isLoggedIn, 'currentUser:', this.currentUser());
     });
-
-    console.log('USER ID:', this.userId);
   }
 
   ngOnDestroy(): void {
@@ -65,17 +60,14 @@ export class HeaderComponent implements OnInit {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        console.error('Logout error:', err);
         this.storageService.clean();
         this.isLoggedIn.set(this.storageService.isLoggedIn());
         this.router.navigate(['/']);
       }
     });
   }
-
-  testNavigation(): void {
-    this.router.navigate(['68718494c4737e658b2ffedb/teams']);
-    console.log('Test navigation to /68718494c4737e658b2ffedb/teams');
+  logNavigation(userId: string | undefined): void {
+    console.log('HeaderComponent: Navigating to', [userId, 'teams']);
   }
 
 }

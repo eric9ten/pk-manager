@@ -1,7 +1,7 @@
 <div class="app-container">
   <pkm-header></pkm-header>
   <main class="main">
-    <div class="content">
+    <div class="app-container_content">
       <router-outlet />
     </div>
   </main>
@@ -11,10 +11,10 @@
   >
     <pkm-register></pkm-register>
   </pkm-modal>
-  <pkm-modal 
-    title="Login to PitchKeeper Manager" 
-    [isShown]="modalService.loginModalShown()"
-  >
+    <pkm-modal 
+      title="Login to PitchKeeper Manager" 
+      [isShown]="modalService.loginModalShown()"
+    >
     <pkm-login></pkm-login>
   </pkm-modal>
   <pkm-footer></pkm-footer>

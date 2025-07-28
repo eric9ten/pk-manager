@@ -24,6 +24,25 @@ export const routes: Routes = [
                 (c) => c.TeamsViewComponent
             ),
             title: 'Teams',
+        // children: [
+        //     {
+        //         path: 'team/:id',
+        //         loadComponent: () =>
+        //             import('../pages/team-detail/team-detail.component').then(
+        //                 (c) => c.TeamDetailComponent
+        //             ),
+        //         pathMatch: 'full',
+        //     },
+        // ]
+    },
+    {
+        path: ':user/team/:id',
+        loadComponent: () =>
+            import('../pages/team-detail/team-detail.component').then(
+                (c) => c.TeamDetailComponent
+            ),
+        pathMatch: 'full',
+        title: 'Team Detail',
     },
     {
         path: ':user/events',

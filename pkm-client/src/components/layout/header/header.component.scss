@@ -37,11 +37,14 @@
             cursor: pointer;
 
             a {
-                border-bottom: none;
+                color: var(--c-text);
+                border: none;
+                transition: all 0.1s ease-in-out;
 
                 &:hover {
                     color: var(--c-link);
                     background-color: transparent;
+                    border: none;
                 }
             }
 

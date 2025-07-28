@@ -16,7 +16,7 @@
                   > 
                       <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'dashboard']" (click)="isOpen = !isOpen" routerLinkActive="active" ariaCurrentWhenActive="page">Dashboard</a></li>
                       <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'teams']" (click)="isOpen = !isOpen" routerLinkActive="active" ariaCurrentWhenActive="page">Teams</a></li>
-                      <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'events']" (click)="isOpen = !isOpen" routerLinkActive="active" ariaCurrentWhenActive="page">Events</a></li>
+                      <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'events']" (click)="isOpen = !isOpen; logNavigation(currentUser()?.id)" routerLinkActive="active" ariaCurrentWhenActive="page">Events</a></li>
                       <!-- <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'players']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Players</a></li> -->
                       <!-- <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'users']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Users</a></li> -->
                       <!-- <li class="menu_item"><a [routerLink]="[currentUser()!.id, 'seasons']" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="isOpen = !isOpen">Seasons</a></li> -->

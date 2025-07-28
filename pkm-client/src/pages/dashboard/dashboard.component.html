@@ -1,1 +1,26 @@
-<p>dashboard works!</p>
+<mat-sidenav-container>
+  <mat-sidenav-content>    
+    <section class="dashboard">
+        <div class="dashboard_content">
+            <div class="dashboard_messages">
+                Messages
+            </div>
+            <div class="dashboard_events">
+                <pkm-games-card 
+                [isOnDash]="true"
+                (addGameEvent)="sidenav.toggle()"
+                />
+            </div>
+            <div class="dashboard_teams">
+                Teams
+            </div>
+        </div>
+    </section>
+  </mat-sidenav-content>
+  <mat-sidenav #sidenav position="end" mode="over" class="manager-page_sidenav">
+    <div class="manager-page_sidenav-title">
+      <h2>Add Event</h2>
+    </div>
+    <pkm-add-game-form></pkm-add-game-form>
+  </mat-sidenav>
+</mat-sidenav-container>

@@ -1,0 +1,33 @@
+$border: 1px solid var(--c-grey-l3);
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100vh - 100px);
+
+    &_content {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: 30% 70%;
+        grid-template-areas: "messages messages"
+            "events teams";
+        height: 100%;
+        border: $border;
+    }
+
+    &_messages {
+        grid-area: messages;
+        border: $border;
+    }
+
+    &_events {
+        grid-area: events;
+        border: $border;
+    }
+
+    &_teams {
+        grid-area: teams;
+        border: $border;
+    }
+}

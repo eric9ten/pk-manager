@@ -2,10 +2,12 @@
     display: grid;
     grid-template-rows: 100px 1fr 200px;
     min-height: 100vh;
-}
 
-.content {
-    width: 100%;
-    margin: 0 auto;
-    text-align: center;
+    &_content {
+        width: 100%;
+        height: calc(100vh - 100px);
+        overflow: hidden;
+        margin: 0 auto;
+        text-align: center;
+    }
 }

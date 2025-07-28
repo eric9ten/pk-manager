@@ -6,9 +6,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDialog } from '@angular/material/dialog';
 import { ButtonStandardComponent } from "../buttons/button-standard/button-standard.component";
 import { ColorPickerComponent } from '../color-picker/color-picker.component';
-import { TTeamColor } from '../../types/team.type';
+import { TTeam, TTeamColor } from '../../types/team.type';
 import { MatSidenav } from '@angular/material/sidenav';
 import { TeamService } from '@services/team.service';
+import { TokenStorageService } from '@services/token-storage.service';
 
 @Component({
   selector: 'pkm-add-team-form',
@@ -19,11 +20,17 @@ import { TeamService } from '@services/team.service';
 })
 export class AddTeamFormComponent {
   @Input() sidenav!: MatSidenav;
-  teamColor = signal<TTeamColor>({name: 'black', value: '#000000'});
+
+  private readonly teamService = inject(TeamService);
+  private readonly storageService = inject(TokenStorageService);
   private fb = inject(FormBuilder);
+
+  teamColor = signal<TTeamColor>({name: 'black', value: '#000000'});
+  private readonly user: any = this.storageService.getUser();
 
   readonly dialog = inject(MatDialog);
   protected isChecked = false;
+  error: string | null = null;
 
   addTeamForm = this.fb.group ({
     name: ['', [Validators.required, Validators.minLength(4)]],
@@ -34,13 +41,9 @@ export class AddTeamFormComponent {
       away: ['#ffffff']
     }),
     genGroup: ['girls'],
-    owner: ['ABCD%123456789', [Validators.required]],
+    owner: [this.user?.id, [Validators.required]],
 
   })
-
-  constructor(
-    private teamService: TeamService,
-  ) {}
 
   get f(): { [key: string]: AbstractControl } {
     return this.addTeamForm.controls;
@@ -89,13 +92,24 @@ export class AddTeamFormComponent {
   }
 
   private addTeam(): void {
-    this.teamService.create(this.addTeamForm.value)
-    .subscribe({
+    this.error = null;
+    this.teamService.createTeam(this.addTeamForm.value as TTeam).subscribe({
       next: (data) => {
-        console.log ("Team Added")
+        this.teamService.notifyTeamCreated();
+        this.addTeamForm.reset({
+          name: '',
+          abbrev: '',
+          ageGroup: '',
+          colors: { home: '#000000', away: '#ffffff' },
+          genGroup: 'girls',
+          owner: this.user?.id
+        });
+        this.sidenav.close();
       },
-      error: (e) => console.log(e)
-    })
-
+      error: (e) => {
+        this.error = e.error?.message || 'Failed to create team';
+        console.error('AddTeamFormComponent: Error adding team', e);
+      }
+    });
   }
 }

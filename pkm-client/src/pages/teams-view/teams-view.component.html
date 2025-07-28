@@ -48,7 +48,9 @@
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="arrow">
-                                <td mat-cell *matCellDef="let element" class="pageTable_data teamsTable_nav"><span class="triangle triangle_right triangle_grey"></span></td>
+                                <td mat-cell *matCellDef="let element" class="pageTable_data teamsTable_nav">
+                                    <mat-icon aria-hidden="false" aria-label="view team" fontIcon="arrow_right"></mat-icon>
+                                </td>
                             </ng-container>
                                 <tr mat-row *matRowDef="let row; columns: ownedDisplayColumns;" class="pageTable_row teamsRow" (click)="clickTeam(row)"></tr>
                         </table>
