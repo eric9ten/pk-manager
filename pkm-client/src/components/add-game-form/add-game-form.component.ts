@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -43,6 +43,7 @@ export class AddGameFormComponent {
   private _snackBar = inject(MatSnackBar);
 
   @Input() sidenav!: MatSidenav;
+  @Output() gameAdded = new EventEmitter<void>();
 
   addGameForm!: FormGroup;
   error = '';
@@ -72,12 +73,15 @@ export class AddGameFormComponent {
 
     this.addGameForm = this.fb.group({
       gameDate: ['', Validators.required],
-      gameTime: [null],
+      gameTime: ['', Validators.required],
       teamA: ['', Validators.required],
       teamB: ['', Validators.required],
       homeTeam: ['a'],
       location: [],
       gameType: [],
+      gameTypeDescription: [],
+      teamAStats: [{goals: 0, passes: 0, shots: 0, tackles: 0, goalKicks: 0, cornerKicks: 0, fouls: 0, yellowCards: 0, redCards: 0}],
+      teamBStats: [{goals: 0, passes: 0, shots: 0, tackles: 0, goalKicks: 0, cornerKicks: 0, fouls: 0, yellowCards: 0, redCards: 0}],
       owner: [],
     });
   }
@@ -140,10 +144,18 @@ export class AddGameFormComponent {
   }
 
   onSubmit(): void {
-    this._checkDateTime();
+    console.log('AddGameFormComponent: Form time:', this.addGameForm.controls['gameTime'].value);
+    this.checkDateTime();
     if (!this.addGameForm.valid || !this.fullDate) {
-      console.warn('AddGameFormComponent: Form is invalid or date is missing');
-      this._openSnackBar('Please fill in all required fields', 'Close');
+      console.warn('AddGameFormComponent: Form invalid or date missing', {
+        formValid: this.addGameForm.valid,
+        gameDate: this.addGameForm.controls['gameDate'].value,
+        gameTime: this.addGameForm.controls['gameTime'].value,
+        gameDateErrors: this.addGameForm.controls['gameDate'].errors,
+        gameTimeErrors: this.addGameForm.controls['gameTime'].errors,
+        fullDate: this.fullDate,
+      });
+      this._openSnackBar('Please fill in all required fields correctly', 'Close');
       return;
     }
 
@@ -171,6 +183,8 @@ export class AddGameFormComponent {
           owner: this.userId,
           teamA: teamAId,
           teamB: teamBId,
+          teamAStats: this.addGameForm.value.teamAStats[0],
+          teamBStats: this.addGameForm.value.teamBStats[0],
         };
 
         console.log('AddGameFormComponent: Sending game data', formValue);
@@ -180,14 +194,18 @@ export class AddGameFormComponent {
             this._openSnackBar('Game created successfully', 'Close');
             this.addGameForm.reset({
               gameDate: '',
-              gameTime: null,
-              teamA: '',
-              teamB: '',
+              gameTime: '',
+              teamA: null,
+              teamB: null,
               homeTeam: 'a',
               location: '',
               gameType: '',
+              gameTypeDescription: '',
+              teamAStats: {goals: 0, passes: 0, shots: 0, tackles: 0, goalKicks: 0, cornerKicks: 0, fouls: 0, yellowCards: 0, redCards: 0},
+              teamBStats: {goals: 0, passes: 0, shots: 0, tackles: 0, goalKicks: 0, cornerKicks: 0, fouls: 0, yellowCards: 0, redCards: 0},
               owner: '',
             });
+            this.gameAdded.emit();
             this.sidenav.close();
           },
           error: (error) => {
@@ -203,15 +221,17 @@ export class AddGameFormComponent {
     });
   }
 
-  private resolveTeam(teamValue: TTeam | string): Observable<string | undefined> {
+  private resolveTeam(teamValue: TTeam | string): Observable<string | null> {
     if (typeof teamValue !== 'string') {
-      const teamId = teamValue._id || '00000000';
-      return of(teamId);
+      const teamId = teamValue._id === '00000000' ? null : teamValue._id;
+      console.log('AddGameFormComponent: Resolved team ID', teamId, 'for', teamValue);
+      return of(teamId!);
     }
 
     const existingTeam = this.teamsA.find(team => team.name.toLowerCase() === teamValue.toLowerCase());
     if (existingTeam) {
-      return of(existingTeam._id);
+      console.log('AddGameFormComponent: Found existing team', existingTeam._id, 'for', teamValue);
+      return of(existingTeam._id!);
     }
 
     const newTeam = {
@@ -228,21 +248,25 @@ export class AddGameFormComponent {
         console.log('AddGameFormComponent: New team created', team);
         this.teamsA = [...this.teamsA, team];
         this.teamsB = [...this.teamsB, team];
-        return team._id;
+        return team._id!;
       })
     );
   }
 
-  private _checkDateTime(): void {
+  private checkDateTime(): void {
     const gameDateControl = this.addGameForm.controls['gameDate'];
     const gameTimeControl = this.addGameForm.controls['gameTime'];
 
-    if (!gameDateControl.value) {
-      console.warn('AddGameFormComponent: No valid game date provided');
+    if (!gameDateControl.value || !gameTimeControl.value) {
+      console.warn('AddGameFormComponent: Missing date or time', {
+        gameDate: gameDateControl.value,
+        gameTime: gameTimeControl.value,
+      });
       this.fullDate = null;
       return;
     }
 
+    // Handle date input from <input type="date"> (YYYY-MM-DD)
     const dateParts = gameDateControl.value.split('-').map((part: string) => parseInt(part, 10));
     if (dateParts.length !== 3 || dateParts.some(isNaN)) {
       console.warn('AddGameFormComponent: Invalid date format:', gameDateControl.value);
@@ -250,35 +274,45 @@ export class AddGameFormComponent {
       return;
     }
 
-    let hour = 12;
-    let minute = 0;
-    let isPM = true;
-
-    if (gameTimeControl.value) {
-      const timeParts = gameTimeControl.value.split(':').map((part: string) => parseInt(part, 10));
-      if (timeParts.length >= 2 && !timeParts.some(isNaN)) {
-        hour = timeParts[0];
-        minute = timeParts[1];
-      } else {
-        console.warn('AddGameFormComponent: Invalid time format:', gameTimeControl.value);
-        this.fullDate = null;
-        return;
-      }
+    // Parse time in 24-hour format (HH:mm)
+    const timeMatch = gameTimeControl.value.match(/(\d{1,2}):(\d{2})/);
+    if (!timeMatch) {
+      console.warn('AddGameFormComponent: Invalid time format:', gameTimeControl.value);
+      this.fullDate = null;
+      return;
     }
 
-    if (isPM && hour !== 12) {
-      hour += 12;
-    } else if (!isPM && hour === 12) {
-      hour = 0;
+    const [, hours, minutes] = timeMatch;
+    let hour = parseInt(hours, 10);
+    const minute = parseInt(minutes, 10);
+
+    // Validate hour and minute ranges
+    if (hour > 23 || minute > 59) {
+      console.warn('AddGameFormComponent: Invalid time values:', { hour, minute });
+      this.fullDate = null;
+      return;
     }
+
+    // Convert to 12-hour format with AM/PM for gameTime
+    const isPM = hour >= 12;
+    const period = isPM ? 'PM' : 'AM';
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const formattedGameTime = `${displayHour}:${minutes.padStart(2, '0')} ${period}`;
+    this.addGameForm.patchValue({ gameTime: formattedGameTime });
 
     const year = dateParts[0];
-    const month = dateParts[1] - 1;
+    const month = dateParts[1] - 1; // JavaScript months are 0-based
     const day = dateParts[2];
 
     try {
-      const utcDate = Date.UTC(year, month, day, hour, minute);
-      this.fullDate = new Date(utcDate).toISOString();
+      const localDate = new Date(year, month, day, hour, minute);
+      if (isNaN(localDate.getTime())) {
+        console.warn('AddGameFormComponent: Invalid date constructed:', { year, month, day, hour, minute });
+        this.fullDate = null;
+        return;
+      }
+      this.fullDate = localDate.toISOString();
+      console.log('AddGameFormComponent: Constructed date:', this.fullDate, 'Local:', localDate.toLocaleString(), 'Formatted gameTime:', formattedGameTime);
     } catch (error) {
       console.error('AddGameFormComponent: Error creating date:', error);
       this.fullDate = null;

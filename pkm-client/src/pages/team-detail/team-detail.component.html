@@ -141,6 +141,6 @@
     <div class="manager-page_sidenav-title">
       <h2>Add Event</h2>
     </div>
-    <pkm-add-game-form></pkm-add-game-form>
+    <pkm-add-game-form [sidenav]="sidenav" (gameAdded)="sidenav.close()"></pkm-add-game-form>
   </mat-sidenav>
 </mat-sidenav-container>

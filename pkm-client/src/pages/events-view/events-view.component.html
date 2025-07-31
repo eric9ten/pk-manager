@@ -1,123 +1,137 @@
 <div class="manager-page events-page">
-    <section class="manager-page_title">
-        <h1>{{ title }}</h1>
-    </section>
-    <section class="manager-page_content events-page_content">
-        <mat-sidenav-container [hasBackdrop]="true">
-            <mat-sidenav-content>
-                <div class="manager-page_content-wrapper events-page_content-wrapper">
-                    <div class="manager-page_content-container upcoming-events_container">
-                        <div class="manager-page_section-title upcoming-events_section-title">
-                            <h2>Upcoming</h2>
-                            <pkm-button-icon color="grey" [isDisabled]="false" (click)="sidenav.toggle()">
-                                <pkm-add-circle-icon />
-                            </pkm-button-icon>
-                        </div>
-                        @if(loadingUpcoming()) {
-                            <p>Loading...</p>
-                        }
-                        @if(upcomingError) {
-                            <p>Error</p>
-                        }
-                        @if(upcomingGames.length > 0) {
-                            <table mat-table [dataSource]="upcomingDataSource" class="pkm-table upcoming-table">
-                                <ng-container matColumnDef="date">
-                                    <td mat-cell *matCellDef="let game" class="upcoming-table_gameDate">{{game.gameDate | date:'shortDate'}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="time">
-                                    <td mat-cell *matCellDef="let game" class="upcoming-table_gameTime">{{game.gameDate | date:'hh:mm'}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="name">
-                                    <td mat-cell *matCellDef="let game"  class="upcoming-table_gameName">
-                                        <span *ngFor="let team of game.teamAInfo">{{team.name}}!!</span>
-                                        <span *ngIf="game.homeTeam == 'a'; else teamBHome">vs.</span>
-                                        <ng-template #teamBHome>&#64;</ng-template>
-                                        <span *ngFor="let team of game.teamBInfo">{{team.name}}!!</span>
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="field">
-                                    <td mat-cell *matCellDef="let game" class="upcoming-table_field">{{game.location}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="league">
-                                    <td mat-cell *matCellDef="let game" class="upcoming-table_league">{{game.league}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="arrow">
-                                    <td mat-cell class="pageTable_data teamsTable_nav"><span class="triangle triangle_right triangle_grey"></span></td>
-                                </ng-container>
-                                <tr mat-row *matRowDef="let row; columns: upcomingDisplayColumns;" class="pageTable_row gamesRow"></tr>
-                            </table>
-                        } @else {
-                            <p class="noResultsMsg">There are no upcoming events.</p>
-                        }
-                    </div>
-                    <div class="manager-page_content-container recent-events_container">
-                        <div class="manager-page_section-title recent-events_section-title">
-                            <h2>Recent</h2>
-                        </div>
-                        @if(loadingRecent()) {
-                            <p>Loading...</p>
-                        }
-                        @if(errorRecent) {
-                            <p>Error :(</p>
-                        }
-                        @if(recentGames.length > 0) {
-                            <table mat-table [dataSource]="recentDataSource" class="pkm-table events-table able recent-table">
-                                <ng-container matColumnDef="result">
-                                    <td mat-cell *matCellDef="let game" class="events-table_game-result">
-                                        @if (this.teamAGoals == this.teamBGoals) {
-                                            <span ngClass="draw">Draw</span>
-                                        } @else if(this.teamAGoals > this.teamBGoals) {
-                                            <span ngClass="win">Win</span>
-                                        } @else {
-                                            <span ngClass="loss">Loss</span>
-                                        }
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="score">
-                                    <td mat-cell *matCellDef="let game" class="events-table_game-score" >
-                                        @if(this.teamAGoals == this.teamBGoals) {
-                                            <span ngClass="draw">{{ this.teamAGoals }} - {{ this.teamBGoals }}</span>
-                                        } @else if(this.teamAGoals > this.teamBGoals) {
-                                            <span ngClass="win">{{ this.teamAGoals }} - {{ this.teamBGoals }}</span>
-                                        } @else {
-                                            <span ngClass="loss">{{ this.teamAGoals }} - {{ this.teamBGoals }}</span>
-                                        }
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="name">
-                                    <td mat-cell *matCellDef="let game" class="events-table_game-name">
-                                        <span>{{ game.teamA.name }}</span>
-                                        @if(game.homeTeam == 'a') {
-                                            <span>vs.</span>
-                                        } @else {
-                                            <span>&#64;</span>
-                                        }
-                                        <span>{{ game.teamB.name }}</span>
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="field">
-                                    <td mat-cell *matCellDef="let game"  class="events-table_field">{{ game.location }}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="date">
-                                    <td mat-cell *matCellDef="let game" class="events-table_game-date">{{ game.gameDate | date:'shortDate' }}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="arrow">
-                                    <td mat-cell *matCellDef="let game" class="events-table_data"><span class="triangle triangle_right triangle_grey"></span></td>
-                                </ng-container>
-                                <tr mat-row *matRowDef="let row; columns: recentDisplayColumns;" class="page-table_row event-row"></tr>
-                            </table>
-                        } @else {
-                            <p class="noResultsMsg">There are no recent events.</p>
-                        }
-                    </div>
-                </div>
-            </mat-sidenav-content>
-            <mat-sidenav #sidenav position="end" mode="over" class="events-page_sidenav">
-                <div class="events-page_sidenav-title">
-                    <h2>Add Event</h2>
-                </div>
-                <pkm-add-game-form></pkm-add-game-form>
-            </mat-sidenav>
-        </mat-sidenav-container>
-    </section>
+  <section class="manager-page_title">
+    <h1>{{ title }}</h1>
+  </section>
+  <section class="manager-page_content events-page_content">
+    <mat-sidenav-container [hasBackdrop]="true">
+      <mat-sidenav-content>
+        <div class="manager-page_content-wrapper events-page_content-wrapper">
+          <div class="manager-page_content-container upcoming-events_container">
+            <div class="manager-page_section-title upcoming-events_section-title">
+              <h2>Upcoming</h2>
+              <pkm-button-icon color="grey" [isDisabled]="false" (click)="sidenav.toggle()">
+                <pkm-add-circle-icon />
+              </pkm-button-icon>
+            </div>
+            @if (loadingUpcoming()) {
+              <p>Loading...</p>
+            }
+            @if (upcomingError()) {
+              <p>Error: {{ upcomingError() }}</p>
+            }
+            @if (upcomingGames.length > 0) {
+              <table mat-table [dataSource]="upcomingDataSource" class="pkm-table events-table">
+                <ng-container matColumnDef="date">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-date">{{ game.gameDate | date: 'shortDate' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="time">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-time">{{ game.gameDate | date: 'shortTime' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="name">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-name">
+                    <span>{{ game.teamAInfo.name }}</span>
+                    @if(game.homeTeam === 'a') {
+                        <span class="pkm-table_vsat">vs.</span>
+                    } @else {
+                        <span class="pkm-table_vsat">&#64;</span>
+                    }
+                    <span>{{ game.teamBInfo?.name || 'TBD' }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="location">
+                  <td mat-cell *matCellDef="let game" class="events-table_location">{{ game.location || 'TBD' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="type">
+                  <td mat-cell *matCellDef="let game" class="events-table_type">{{ game.gameType || 'Unknown' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="typeDescription">
+                  <td mat-cell *matCellDef="let game" class="events-table_type-description">{{ game.gameTypeDescription || '' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="arrow">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-nav">
+                  <mat-icon aria-hidden="false" aria-label="view team" fontIcon="arrow_right" class="material-icons material-icons-outlined"></mat-icon>
+                  </td>
+                </ng-container>
+                <tr mat-row *matRowDef="let row; columns: upcomingDisplayColumns;" class="pageTable_row events-row"></tr>
+              </table>
+            } @else {
+              <p class="noResultsMsg">There are no upcoming events.</p>
+            }
+          </div>
+          <div class="manager-page_content-container recent-events_container">
+            <div class="manager-page_section-title recent-events_section-title">
+              <h2>Recent</h2>
+            </div>
+            @if (loadingRecent()) {
+              <p>Loading...</p>
+            }
+            @if (errorRecent()) {
+              <p>Error: {{ errorRecent() }}</p>
+            }
+            @if (recentGames.length > 0) {
+              <table mat-table [dataSource]="recentDataSource" class="pkm-table events-table recent-table">
+                <ng-container matColumnDef="result">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-result">
+                    @if (game.teamAStats?.goals === undefined || game.teamBStats?.goals === undefined) {
+                      <span>Pending</span>
+                    } @else if (game.teamAStats.goals === game.teamBStats.goals) {
+                      <span class="draw">Draw</span>
+                    } @else if (game.teamAStats.goals > game.teamBStats.goals) {
+                      <span class="win">Win</span>
+                    } @else {
+                      <span class="loss">Loss</span>
+                    }
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="score">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-score">
+                    @if (game.teamAStats?.goals === undefined || game.teamBStats?.goals === undefined) {
+                      <span>-</span>
+                    } @else if (game.teamAStats.goals === game.teamBStats.goals) {
+                      <span class="draw">{{ game.teamAStats.goals }} - {{ game.teamBStats.goals }}</span>
+                    } @else if (game.teamAStats.goals > game.teamBStats.goals) {
+                      <span class="win">{{ game.teamAStats.goals }} - {{ game.teamBStats.goals }}</span>
+                    } @else {
+                      <span class="loss">{{ game.teamAStats.goals }} - {{ game.teamBStats.goals }}</span>
+                    }
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="name">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-name">
+                    <span>{{ game.teamAInfo?.name || 'TBD' }}</span>
+                    @if(game.homeTeam === 'a') {
+                        <span class="pkm-table_vsat">vs.</span>
+                    } @else {
+                        <span class="pkm-table_vsat">&#64;</span>
+                    }
+                    <span>{{ game.teamBInfo?.name || 'TBD' }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="location">
+                  <td mat-cell *matCellDef="let game" class="events-table_location">{{ game.location || 'TBD' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="date">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-date">{{ game.gameDate | date: 'shortDate' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="arrow">
+                  <td mat-cell *matCellDef="let game" class="events-table_event-nav pkm-table_actions">
+                  <mat-icon aria-hidden="false" aria-label="view team" fontIcon="arrow_right" class="material-icons material-icons-outlined"></mat-icon>
+                  </td>
+                </ng-container>
+                <tr mat-row *matRowDef="let row; columns: recentDisplayColumns;" class="page-table_row events-row"></tr>
+              </table>
+            } @else {
+              <p class="noResultsMsg">There are no recent events.</p>
+            }
+          </div>
+        </div>
+      </mat-sidenav-content>
+      <mat-sidenav #sidenav position="end" mode="over" class="events-page_sidenav">
+        <div class="events-page_sidenav-title">
+          <h2>Add Event</h2>
+        </div>
+        <pkm-add-game-form [sidenav]="sidenav" (gameAdded)="sidenav.close()"></pkm-add-game-form>
+      </mat-sidenav>
+    </mat-sidenav-container>
+  </section>
 </div>

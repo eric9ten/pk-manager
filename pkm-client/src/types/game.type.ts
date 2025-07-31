@@ -11,6 +11,8 @@ export type TGame = {
     homeTeam?: string;
     gameDate: Date;
     location?: string;
+    gameType?: string;
+    gameTypeDescription?: string;
     teamAStats?: TGameStats;
     teamBStats?: TGameStats;
     owner?: TUser;

@@ -16,63 +16,76 @@
         }
 
     }
-}
 
-.events-table {
-    &_name {
-        width: 40%;
-        max-width: 500px;
-    }
+    .events-table {
+        width: 100%;
 
-    &_div-age {
-        width: 10%;
-        max-width: 100px;
-        text-align: left;
-    }
+        td {
+            padding: 0 0.5rem;
 
-    &_div-gen {
-        width: 10%;
-        max-width: 50px;
-        text-align: left;
-    }
-
-    &_player-count {
-        width: 15%;
-        max-width: 150px;
-        text-align: left;
-    }
-
-    &_staff {
-        width: 20%;
-        max-width: 200px;
-        text-align: left;
-
-        &> span {
-            &::before {
-                content: ", ";
-
+            &:first-of-type {
+                padding-left: 1rem;
             }
 
-            &:first-of-type::before {
-                content: "";
+            &:last-of-type {
+                padding-right: 1rem;
             }
         }
-    }
 
-    &_nav {
-        text-align: right;
-        vertical-align: middle;
-    }
+        &_event-date {
+            width: 12%;
+            max-width: 100px;
+            font-weight: 700;
+        }
 
-    &_game-result {
-        font-weight: 700;
-        text-transform: uppercase;
-    }
+        &_event-time{
+            width: 12%;
+            max-width: 100px;
+            font-weight: 700;
+        }
 
-    &_game-score {
-        font-weight: 700;
+        &_event-name {
+            width: 31%;
+            text-align: left;
+        }
+
+        &_location {
+            width: 15%;
+            max-width: 100px;
+            text-align: left;
+        }
+
+        &_type {
+            width: 15%;
+            max-width: 100px;
+            text-align: left;
+        }
+
+        &_type-description {
+            width: 15%;
+            max-width: 100px;
+            text-align: left;
+        }
+
+        &_event-nav {
+            width: 5%;
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        &_event-result {
+            width: 10%;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        &_event-score {
+            width: 10%;
+            font-weight: 700;
+        }
     }
 }
+
 
 .managerAddSection {
     &_wrapper {
@@ -107,55 +120,5 @@
         margin: 1rem 4rem 1rem 1rem;
 
     }
-
-    .content_wrapper{
-        flex: 1 1 33%;
-        max-width: 400px;
-        margin-bottom: 1.66rem;
-
-        .content_input {
-            height: 2.77rem;
-
-            &.input_abbrev {
-                max-width: 150px;
-            }
-
-            &.input_age {
-                max-width: 90px;
-            }
-
-            &.input_colors {
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-                
-                .colors {
-                    &_title {
-                        margin-right: 2.75rem;
-
-                    }
-
-                    &_label {
-                        margin-right: 1rem;
-
-                    }
-
-                    &_picker {
-                        width: 50px;
-                        height: 50px;
-                        padding: 0;
-                        border: none;
-                        
-                        &:first-of-type {
-                            margin-right: 1rem;
-                        }
-
-                    }
-                }
-            }
-        }
-
-    }
-
 
 }

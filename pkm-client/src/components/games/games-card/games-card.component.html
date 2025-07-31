@@ -31,6 +31,9 @@
                                 }
                                 <span>{{ game.teamBName }}</span>
                             </td>
+                            <td class="games-card_table-actions pkm-table_actions">
+                                <mat-icon aria-hidden="false" aria-label="view team" fontIcon="arrow_right" class="material-icons material-icons-outlined"></mat-icon>
+                            </td>
                         </tr>
                     }
                 </table>
@@ -89,6 +92,9 @@
                                 </td>
                                 <td class="games-card_table-location">{{ game.location }}</td>
                                 <td class="games-card_table-date">{{game.gameDate | date:'shortDate'}}</td>
+                                <td class="games-card_table-actions pkm-table_actions">
+                                    <mat-icon aria-hidden="false" aria-label="view team" fontIcon="arrow_right" class="material-icons material-icons-outlined"></mat-icon>
+                                </td>
                             </tr>
                         }
                     </table>

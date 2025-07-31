@@ -139,8 +139,8 @@ export class GamesCardComponent implements OnInit, OnDestroy {
         const teamMap = new Map<string, string>(teamResults.map(result => [result.id, result.name]));
         const displayGames = this.allGames.map(game => ({
           _id: game._id,
-          teamAName: teamMap.get(game.teamA!) || 'TBD',
-          teamBName: teamMap.get(game.teamB!) || 'TBD',
+          teamAName: game.teamA ? teamMap.get(game.teamA) || 'TBD' : 'TBD',
+          teamBName: game.teamB ? teamMap.get(game.teamB) || 'TBD' : 'TBD',
           gameDate: new Date(game.gameDate),
           homeTeam: game.homeTeam!,
           teamAGoals: game.teamAStats?.goals,

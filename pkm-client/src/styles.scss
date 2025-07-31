@@ -323,10 +323,6 @@
 		}
 
 		tr {
-			// display: flex;
-			// justify-content: stretch;
-			// align-items: center;
-			// gap: 0.5rem 0;
 			padding: 0.5rem 0 0.5rem 1.25rem;
 			border-top-width: 1px;
 			border-top-style: solid;
@@ -352,6 +348,7 @@
 				border-bottom-color: var(--c-orange-l5);
 				background-color: var(--c-orange-l4);
 				cursor: pointer;
+
 				
 			}
 			&:focus {
@@ -370,6 +367,10 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 
+		}
+
+		&_vsat {
+			margin: 0 0.5rem;
 		}
 
 		&_no-results-msg {

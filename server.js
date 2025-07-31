@@ -59,16 +59,19 @@ app.get("/", (req, res) => {
 });
 
 try {
+  console.log('Loading auth routes...');
   app.use('/api/pk-manager', require('./app/routes/auth.routes'));
+  console.log('Loading user routes...');
   app.use('/api/pk-manager', require('./app/routes/user.routes'));
+  console.log('Loading team routes...');
   app.use('/api/pk-manager', require('./app/routes/team.routes'));
+  console.log('Loading game routes...');
   app.use('/api/pk-manager', require('./app/routes/game.routes'));
 } catch (err) {
   console.error('Error loading routes:', err);
   process.exit(1);
 }
 
-// Catch-all for unmatched routes
 app.use((req, res) => {
   console.log(`Unmatched route: ${req.method} ${req.originalUrl}`);
   res.status(404).json({ message: `Cannot ${req.method} ${req.originalUrl}` });
@@ -79,17 +82,21 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-function initial() {
-  Role.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      new Role({ name: "user" }).save(err => {
-        if (err) console.log("error", err);
-        console.log("added 'user' to roles collection");
-      });
-      new Role({ name: "admin" }).save(err => {
-        if (err) console.log("error", err);
-        console.log("added 'admin' to roles collection");
-      });
+async function initial() {
+  try {
+    console.log('Checking roles collection...');
+    const count = await Role.estimatedDocumentCount();
+    if (count === 0) {
+      console.log('Seeding roles...');
+      await Role.insertMany([
+        { name: 'user' },
+        { name: 'admin' },
+      ]);
+      console.log('Roles seeded successfully');
+    } else {
+      console.log('Roles already exist, skipping seeding');
     }
-  });
+  } catch (err) {
+    console.error('Error seeding roles:', err);
+  }
 }

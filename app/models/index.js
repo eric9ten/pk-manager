@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
 
-const db = {};
+const Role = require('./role.model');
+const User = require('./user.model');
+const Team = require('./team.model');
+const GameStats = require('./gameStats.model');
+const Game = require('./game.model');
 
-db.mongoose = mongoose;
-
-db.user = require("./user.model");
-db.role = require("./role.model");
-db.team = require("./team.model");
-db.game = require("./game.model");
-db.refreshToken = require("./refreshToken.model");
-
-db.ROLES = ["user", "admin"];
-
-module.exports = db;
+module.exports = {
+  mongoose,
+  role: Role,
+  user: User,
+  team: Team,
+  gameStats: GameStats,
+  game: Game,
+};

@@ -1,236 +1,253 @@
-const db = require("../models");
-const { ObjectId } = require('mongodb');
+const db = require('../models');
 const Game = db.game;
 
-// Create and Save a new Game
 exports.create = (req, res) => {
-    // Validate request
-    if (!req.body.teamA) {
-        res.status(400).send({ message: "Must select a team!" });
-    return;
-    }
-    if (!req.body.teamB) {
-        res.status(400).send({ message: "Must select a second team!" });
-    return;
-    }
-    if (!req.body.owner) {
-        res.status(400).send({ message: "Owner can not be empty!" });
-    return;
-    }
- 
-    const gameDate = new Date(req.body.gameDate)
+  console.log('GameController: Creating game', req.body);
+  const { gameDate, gameTime } = req.body;
 
-    // Create a Game
-    const game = new Game({
-        teamA: req.body.teamA,
-        teamB: req.body.teamB,
-        homeTeam: req.body.homeTeam,
-        gameDate: gameDate,
-        location: req.body.location,
-        owner: req.body.owner,
-        scorekeepers: req.body.scorekeepers,
-    });
+  // Validate gameTime format
+  if (!gameTime.match(/^\d{1,2}:\d{2}\s?(AM|PM)$/i)) {
+    console.warn('GameController: Invalid gameTime format', { gameTime });
+    return res.status(400).send({ message: 'Invalid gameTime format. Expected HH:mm AM/PM' });
+  }
 
-    // Save Game in the database
-    game
-    .save(game)
+  // Validate gameDate is a valid ISO string
+  const parsedDate = new Date(gameDate);
+  if (isNaN(parsedDate.getTime())) {
+    console.warn('GameController: Invalid gameDate format', { gameDate });
+    return res.status(400).send({ message: 'Invalid gameDate format. Expected ISO string' });
+  }
+
+  const game = new Game({
+    teamA: req.body.teamA,
+    teamB: req.body.teamB,
+    homeTeam: req.body.homeTeam,
+    gameDate: parsedDate,
+    gameTime,
+    location: req.body.location,
+    gameType: req.body.gameType,
+    gameTypeName: req.body.gameTypeName,
+    teamAStats: req.body.teamAStats || {
+      goals: 0,
+      passes: 0,
+      shots: 0,
+      tackles: 0,
+      goalKicks: 0,
+      cornerKicks: 0,
+      fouls: 0,
+      yellowCards: 0,
+      redCards: 0,
+    },
+    teamBStats: req.body.teamBStats || {
+      goals: 0,
+      passes: 0,
+      shots: 0,
+      tackles: 0,
+      goalKicks: 0,
+      cornerKicks: 0,
+      fouls: 0,
+      yellowCards: 0,
+      redCards: 0,
+    },
+    owner: req.body.owner,
+    scorekeepers: req.body.scorekeepers || [],
+  });
+
+  game.save()
     .then(data => {
-        res.send(data);
+      console.log('GameController: Game created', { ...data._doc, gameDate: data.gameDate.toISOString() });
+      res.status(201).send(data);
     })
     .catch(err => {
-        res.status(500).send({
-        message:
-            err.message || "Some error occurred while creating the Game."
-        });
+      console.error('GameController: Error creating game', err);
+      res.status(500).send({
+        message: err.message || 'Error creating game',
+      });
     });
-  
 };
 
 exports.findAll = (req, res) => {
-    Game.find()
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving games."
-        });
-      });
-  };
-
-// Find a single Game with an id
-exports.findOne = (req, res) => {
-    const id = req.params.id;
-    Game.findById(id)
-      .then(data => {
-        if (!data)
-          res.status(404).send({ message: "Not found Game with id " + id });
-        else res.send(data);
-      })
-      .catch(err => {
-        res
-          .status(500)
-          .send({ message: "Error retrieving Game with id=" + id });
-      });
-};
-
-// Update a Game by the id in the request
-exports.update = (req, res) => {
-    if (!req.body.teamA) {
-        res.status(400).send({ message: "Must select team A!" });
-    return;
-    }
-    if (!req.body.teamB) {
-        res.status(400).send({ message: "Must team B!" });
-    return;
-    }
-    if (!req.body.owner) {
-        res.status(400).send({ message: "Owner can not be empty!" });
-    return;
-    }
-
-    const id = req.params.id;
-    Game.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-      .then(data => {
-        if (!data) {
-          res.status(404).send({
-            message: `Cannot update Game with id=${id}. Maybe Game was not found!`
-          });
-        } else res.send({ message: "Game was updated successfully." });
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error updating Game with id=" + id
-        });
-      });
-};
-
-// Delete a Game with the specified id in the request
-exports.delete = (req, res) => {
-    //TODO: Need to verify ownership.  Only admins and game owners can delete games.
-  const id = req.params.id;
-  Game.findByIdAndRemove(id)
+  const owner = req.query.owner;
+  console.log('GameController: Fetching games for owner', owner);
+  Game.find({ owner })
+    .populate('teamA teamB scorekeepers')
+    .lean()
     .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot delete Game with id=${id}. Maybe Game was not found!`
-        });
-      } else {
-        res.send({
-          message: "Game was deleted successfully!"
-        });
-      }
+      console.log('GameController: Raw games data', data);
+      const formattedData = data.map(game => ({
+        ...game,
+        teamAInfo: Array.isArray(game.teamA) ? (game.teamA[0] || null) : game.teamA,
+        teamBInfo: Array.isArray(game.teamB) ? (game.teamB[0] || null) : game.teamB,
+        teamA: game.teamA && !Array.isArray(game.teamA) ? game.teamA._id : null,
+        teamB: game.teamB && !Array.isArray(game.teamB) ? game.teamB._id : null,
+      }));
+      console.log('GameController: Formatted games data', formattedData);
+      res.send(formattedData);
     })
     .catch(err => {
+      console.error('GameController: Error retrieving games', err);
       res.status(500).send({
-        message: "Could not delete Game with id=" + id
+        message: err.message || 'Error retrieving games',
       });
     });
 };
-// Delete all Games from the database.
-exports.deleteAll = (req, res) => {
-    //TODO: ony available to admins
-    Game.deleteMany({})
-      .then(data => {
-        res.send({
-          message: `${data.deletedCount} Games were deleted successfully!`
-        });
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while removing all games."
-        });
+
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+  console.log('GameController: Fetching game with id', id);
+  Game.findById(id)
+    .populate('teamA teamB scorekeepers')
+    .lean()
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({ message: 'Game not found' });
+      }
+      console.log('GameController: Raw game data', data);
+      const formattedData = {
+        ...game,
+        teamAInfo: Array.isArray(data.teamA) ? (data.teamA[0] || null) : data.teamA,
+        teamBInfo: Array.isArray(data.teamB) ? (data.teamB[0] || null) : data.teamB,
+        teamA: data.teamA && !Array.isArray(data.teamA) ? data.teamA._id : null,
+        teamB: data.teamB && !Array.isArray(data.teamB) ? data.teamB._id : null,
+      };
+      console.log('GameController: Formatted game data', formattedData);
+      res.send(formattedData);
+    })
+    .catch(err => {
+      console.error('GameController: Error retrieving game', err);
+      res.status(500).send({
+        message: err.message || 'Error retrieving game',
       });
+    });
 };
 
-// Find all published Games
-exports.findAllByOwner = (req, res) => {
-    //TODO: Need to account for scorekeepers
-    const owner = req.params.owner;
-    const manager = req.query.manager;
-    var condition = ''
-    if (owner) {
-      if (manager) {
-        //console.log ("Owner and manager")
-        condition = { $or: [ { owner: owner }, {managers: [ manager ] } ]}
-      } else {
-        //console.log ("Owner only")
-        condition = { owner : owner }
-      }
-    } else if (manager) {
-      //console.log ("Manager only")
-      condition = { managers : [ manager ] }
-    }
-    //var condition = { $or: [ { owner: owner }, {managers: [ manager ] } ] };
-    //Game.find(condition).sort({"gameDate": -1})
-    Game.aggregate([
-      {
-        '$lookup': {
-          'from': 'teams', 
-          'localField': 'teamA', 
-          'foreignField': '_id', 
-          'as': 'teamAInfo'
-        }
-      }, {
-        '$lookup': {
-          'from': 'teams', 
-          'localField': 'teamB', 
-          'foreignField': '_id', 
-          'as': 'teamBInfo'
-        }
-      }
-    ])
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving teams."
-        });
+exports.findByOwner = (req, res) => {
+  const id = req.params.userId;
+  console.log('GameController: Fetching games for user', id);
+  Game.find({ owner: id })
+    .populate('teamA teamB scorekeepers')
+    .lean()
+    .then(data => {
+      console.log('GameController: Raw games data (by owner)', data);
+      const formattedData = data.map(game => ({
+        ...game,
+        teamAInfo: Array.isArray(game.teamA) ? (game.teamA[0] || null) : game.teamA,
+        teamBInfo: Array.isArray(game.teamB) ? (game.teamB[0] || null) : game.teamB,
+        teamA: game.teamA && !Array.isArray(game.teamA) ? game.teamA._id : null,
+        teamB: game.teamB && !Array.isArray(game.teamB) ? game.teamB._id : null,
+      }));
+      console.log('GameController: Formatted games data (by owner)', formattedData);
+      res.send(formattedData);
+    })
+    .catch(err => {
+      console.error('GameController: Error retrieving games by owner', err);
+      res.status(500).send({
+        message: err.message || 'Error retrieving games by owner',
       });
-  
+    });
 };
 
-// Find all published Games by Team
-exports.findAllByTeam = (req, res) => {
+exports.findByTeam = (req, res) => {
   const teamId = req.params.teamId;
-  Game.aggregate([
-    {
-      '$match': {
-        '$or': [
-          {
-            'teamA': ObjectId(teamId)
-          }, {
-            'teamB': ObjectId(teamId)
-          }
-        ]
-      }
-    },{
-      '$lookup': {
-        'from': 'teams', 
-        'localField': 'teamA', 
-        'foreignField': '_id', 
-        'as': 'teamAInfo'
-      }
-    }, {
-      '$lookup': {
-        'from': 'teams', 
-        'localField': 'teamB', 
-        'foreignField': '_id', 
-        'as': 'teamBInfo'
-      }
-    }
-  ])
-  .then(data => {
-    res.send(data);
-  })
-  .catch(err => {
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while retrieving teams."
+  console.log('GameController: Fetching games for team', teamId);
+  Game.find({ $or: [{ teamA: teamId }, { teamB: teamId }] })
+    .populate('teamA teamB scorekeepers')
+    .lean()
+    .then(data => {
+      console.log('GameController: Raw games data (by team)', data);
+      const formattedData = data.map(game => ({
+        ...game,
+        teamAInfo: Array.isArray(game.teamA) ? (game.teamA[0] || null) : game.teamA,
+        teamBInfo: Array.isArray(game.teamB) ? (game.teamB[0] || null) : game.teamB,
+        teamA: game.teamA && !Array.isArray(game.teamA) ? game.teamA._id : null,
+        teamB: game.teamB && !Array.isArray(game.teamB) ? game.teamB._id : null,
+      }));
+      console.log('GameController: Formatted games data (by team)', formattedData);
+      res.send(formattedData);
+    })
+    .catch(err => {
+      console.error('GameController: Error retrieving games by team', err);
+      res.status(500).send({
+        message: err.message || 'Error retrieving games by team',
+      });
     });
-  });
 };
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+  console.log('GameController: Updating game with id', id, 'data', req.body);
+  let updateData = { ...req.body };
+
+  // Validate gameTime and gameDate if provided
+  if (req.body.gameDate && req.body.gameTime) {
+    if (!req.body.gameTime.match(/^\d{1,2}:\d{2}\s?(AM|PM)$/i)) {
+      console.warn('GameController: Invalid gameTime format', { gameTime: req.body.gameTime });
+      return res.status(400).send({ message: 'Invalid gameTime format. Expected HH:mm AM/PM' });
+    }
+    const parsedDate = new Date(req.body.gameDate);
+    if (isNaN(parsedDate.getTime())) {
+      console.warn('GameController: Invalid gameDate format', { gameDate: req.body.gameDate });
+      return res.status(400).send({ message: 'Invalid gameDate format. Expected ISO string' });
+    }
+    updateData.gameDate = parsedDate;
+  }
+
+  Game.findByIdAndUpdate(id, updateData, { new: true })
+    .populate('teamA teamB scorekeepers')
+    .lean()
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({ message: 'Game not found' });
+      }
+      console.log('GameController: Raw updated game data', data);
+      const formattedData = {
+        ...data,
+        teamAInfo: Array.isArray(data.teamA) ? (data.teamA[0] || null) : data.teamA,
+        teamBInfo: Array.isArray(data.teamB) ? (data.teamB[0] || null) : data.teamB,
+        teamA: data.teamA && !Array.isArray(data.teamA) ? data.teamA._id : null,
+        teamB: data.teamB && !Array.isArray(data.teamB) ? data.teamB._id : null,
+      };
+      console.log('GameController: Formatted updated game data', formattedData);
+      res.send(formattedData);
+    })
+    .catch(err => {
+      console.error('GameController: Error updating game', err);
+      res.status(500).send({
+        message: err.message || 'Error updating game',
+      });
+    });
+};
+
+exports.delete = (req, res) => {
+  const id = req.params.id;
+  console.log('GameController: Deleting game with id', id);
+  Game.findByIdAndDelete(id)
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({ message: 'Game not found' });
+      }
+      res.send({ message: 'Game deleted successfully' });
+    })
+    .catch(err => {
+      console.error('GameController: Error deleting game', err);
+      res.status(500).send({
+        message: err.message || 'Error deleting game',
+      });
+    });
+};
+
+exports.deleteAll = (req, res) => {
+  console.log('GameController: Deleting all games');
+  Game.deleteMany({})
+    .then(data => {
+      res.send({ message: `${data.deletedCount} games deleted successfully` });
+    })
+    .catch(err => {
+      console.error('GameController: Error deleting all games', err);
+      res.status(500).send({
+        message: err.message || 'Error deleting all games',
+      });
+    });
+};
+
+module.exports = exports;
