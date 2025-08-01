@@ -1,3 +1,3 @@
-# pk-manager
+# PitchKeeper Manager Web App
 
-PitchKeeper Manager Web App
+
